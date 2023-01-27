@@ -9,10 +9,6 @@ let movables = []
 let boundaries = []
 let foreground
 let transitions = []
-let offset = {
-    x: -56,
-    y: -174
-}
 let offsetBuffer = {
     x: 0,
     y: 0
@@ -26,13 +22,13 @@ let spawn = true
 let level = "0_2"
 let levels = {
     "0_2": {
-        init: () => {
+        init: ({ bgPosition }) => {
             collisionsMap = []
             boundaries = []
             background = new Sprite({
                 position: {
-                    x: offset.x,
-                    y: offset.y
+                    x: bgPosition.x,
+                    y: bgPosition.y
                 },
                 imageSrc: "./img/maps/map_0_2(Start).png"
             })
@@ -44,8 +40,8 @@ let levels = {
                     if (symbol === 1089) {
                         boundaries.push(new Boundary({
                             position: {
-                                x: j * Boundary.width + offset.x,
-                                y: i * Boundary.height + offset.y
+                                x: j * Boundary.width + bgPosition.x,
+                                y: i * Boundary.height + bgPosition.y
                             }
                         }))
                     }
@@ -53,8 +49,8 @@ let levels = {
             })
             foreground = new Sprite({
                 position: {
-                    x: offset.x,
-                    y: offset.y
+                    x: bgPosition.x,
+                    y: bgPosition.y
                 },
                 imageSrc: "./img/maps/foreground_0_2(Start).png"
             })
@@ -67,33 +63,32 @@ let levels = {
                     imageSrc: "./img/transition_vertical_right.png",
                     transitTo: "1_2",
                     transitDirection: "Right",
-                    offsetBuffer: {
+                    bgPosition: {
                         x: 0,
+                        y: -174
+                    },
+                    offsetBuffer: {
+                        x: 595,
                         y: 0
                     },
                     playerPosition: {
-                        x: 0,
-                        y: 0
-                    },
-                    bgOffset: {
-                        x: 0,
-                        y: 0
-                    },
-
+                        x: 58,
+                        y: 299
+                    }
                 })
             ]
             movables = [background, ...boundaries, foreground, ...transitions]
         }
     },
     "1_2": {
-        init: () => {
+        init: ({ bgPosition }) => {
             collisionsMap = []
             boundaries = []
             console.log("LEVEL 2")
             background = new Sprite({
                 position: {
-                    x: 0,
-                    y: -174
+                    x: bgPosition.x,
+                    y: bgPosition.y
                 },
                 imageSrc: "./img/maps/map_1_2.png"
             })
@@ -105,8 +100,8 @@ let levels = {
                     if (symbol === 1089) {
                         boundaries.push(new Boundary({
                             position: {
-                                x: j * Boundary.width + offset.x,
-                                y: i * Boundary.height + offset.y
+                                x: j * Boundary.width + bgPosition.x,
+                                y: i * Boundary.height + bgPosition.y
                             }
                         }))
                     }
@@ -114,8 +109,8 @@ let levels = {
             })
             foreground = new Sprite({
                 position: {
-                    x: offset.x,
-                    y: offset.y
+                    x: bgPosition.x,
+                    y: bgPosition.y
                 },
                 imageSrc: "./img/maps/foreground_0_2(Start).png"
             })
@@ -128,9 +123,17 @@ let levels = {
                     imageSrc: "./img/transition_vertical_left.png",
                     transitTo: "0_2",
                     transitDirection: "Left",
+                    bgPosition: {
+                        x: -136,
+                        y: -174
+                    },
                     offsetBuffer: {
-                        x: 640,
+                        x: -635,
                         y: 0
+                    },
+                    playerPosition: {
+                        x: 1304,
+                        y: 299
                     }
                 })
             ]

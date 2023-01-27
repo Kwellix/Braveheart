@@ -23,7 +23,12 @@ const playerShadow = new Sprite({
     imageSrc: "./img/player/shadow.png",
 })
 
-levels[level].init()
+levels[level].init({
+    bgPosition: {
+        x: -56,
+        y: -174
+    }
+})
 
 const keys = {
     w: { pressed: false },
@@ -44,31 +49,22 @@ function rectangularCollision({ rectangle1, rectangle2 }) {
     )
 }
 
-const makePlayerCoordinates = (transition) => {
-    if (transition.transitDirection == "Right") {
-        return [
-            background.image.width - transition.position.x - 80,
-            player.position.y
-        ]
-    }
-    if (transition.transitDirection == "Left") {
-        return [
-            transition.position.x + background.image.width - 180,
-            player.position.y,
-        ]
-    }
-}
-
 const changeLevel = (transition) => {
     gsap.to(overlay, {
         opacity: 1,
         onComplete: () => {
-            levels[transition.transitTo].init()
-            let newPlayerCoords = makePlayerCoordinates(transition)
-            player.position.x = newPlayerCoords[0]
-            player.position.y = newPlayerCoords[1]
-            playerShadow.position.x = newPlayerCoords[0] - 30
-            playerShadow.position.y = newPlayerCoords[1] + 44
+            levels[transition.transitTo].init({
+                bgPosition: {
+                    x: transition.bgPosition.x,
+                    y: transition.bgPosition.y
+                }
+            })
+            player.position.x = transition.playerPosition.x
+            player.position.y = transition.playerPosition.y
+            playerShadow.position.x = transition.playerPosition.x - 30
+            playerShadow.position.y = transition.playerPosition.y + 44
+            offsetBuffer.x = transition.offsetBuffer.x
+            offsetBuffer.y = transition.offsetBuffer.y
             gsap.to(overlay, {
                 opacity: 0
             })
@@ -127,7 +123,6 @@ function animate() {
                     }
                 }
             })) {
-                moving = false
                 changeLevel(transition)
                 break
             }
@@ -183,7 +178,6 @@ function animate() {
                     }
                 }
             })) {
-                moving = false
                 changeLevel(transition)
                 break
             }
@@ -238,7 +232,6 @@ function animate() {
                     }
                 }
             })) {
-                moving = false
                 changeLevel(transition)
                 break
             }
@@ -294,7 +287,6 @@ function animate() {
                     }
                 }
             })) {
-                moving = false
                 changeLevel(transition)
                 break
             }
