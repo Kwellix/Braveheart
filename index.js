@@ -1,46 +1,3 @@
-const canvas = document.querySelector("canvas")
-const c = canvas.getContext('2d')
-
-
-canvas.width = 1400
-canvas.height = 740
-
-const offset = {
-    x: -56,
-    y: -174
-}
-
-const offsetBuffer = {
-    x: 0,
-    y: 0
-}
-
-const collisionsMap = []
-for (let i = 0; i < collisions_0_2.length; i += 30) {
-    collisionsMap.push(collisions_0_2.slice(i, 30 + i))
-}
-
-c.fillStyle = 'white'
-c.fillRect(0, 0, canvas.width, canvas.height)
-
-const image = new Image()
-image.src = "./img/map_0_2(Start).png"
-
-const foregroundImage = new Image()
-foregroundImage.src = "./img/foreground_0_2(Start).png"
-
-const playerShadowImage = new Image()
-playerShadowImage.src = "./img/Player/shadow.png"
-
-const PlayerStandingRightImage = new Image()
-PlayerStandingRightImage.src = "./img/Player/standing_right.png"
-const PlayerStandingLeftImage = new Image()
-PlayerStandingLeftImage.src = "./img/Player/standing_left.png"
-const PlayerRunningRightImage = new Image()
-PlayerRunningRightImage.src = "./img/Player/running_right.png"
-const PlayerRunningLeftImage = new Image()
-PlayerRunningLeftImage.src = "./img/Player/running_left.png"
-
 const player = new Sprite({
     position: {
         x: canvas.width / 2 - 31,
@@ -49,7 +6,7 @@ const player = new Sprite({
     frames: {
         max: 7
     },
-    image: PlayerStandingRightImage,
+    imageSrc: "./img/player/standing_right.png",
     sprites: {
         left: PlayerStandingLeftImage,
         right: PlayerStandingRightImage,
@@ -60,27 +17,13 @@ const player = new Sprite({
 
 const playerShadow = new Sprite({
     position: {
-        x: canvas.width / 2 - 61,
-        y: canvas.height / 2 - 27
+        x: player.position.x - 30,
+        y: player.position.y + 44
     },
-    image: playerShadowImage,
+    imageSrc: "./img/player/shadow.png",
 })
 
-const background = new Sprite({
-    position: {
-        x: offset.x,
-        y: offset.y
-    },
-    image: image
-})
-
-const foreground = new Sprite({
-    position: {
-        x: offset.x,
-        y: offset.y
-    },
-    image: foregroundImage
-})
+levels[level].init()
 
 const keys = {
     w: { pressed: false },
@@ -89,21 +32,7 @@ const keys = {
     d: { pressed: false }
 }
 
-const boundaries = []
-collisionsMap.forEach((row, i) => {
-    row.forEach((symbol, j) => {
-        if (symbol === 1089) {
-            boundaries.push(new Boundary({
-                position: {
-                    x: j * Boundary.width + offset.x,
-                    y: i * Boundary.height + offset.y
-                }
-            }))
-        }
-    })
-})
 
-const movables = [background, ...boundaries, foreground]
 const playerMovables = [player, playerShadow]
 
 function rectangularCollision({ rectangle1, rectangle2 }) {
@@ -115,6 +44,38 @@ function rectangularCollision({ rectangle1, rectangle2 }) {
     )
 }
 
+const makePlayerCoordinates = (transition) => {
+    if (transition.transitDirection == "Right") {
+        return [
+            background.image.width - transition.position.x - 80,
+            player.position.y
+        ]
+    }
+    if (transition.transitDirection == "Left") {
+        return [
+            transition.position.x + background.image.width - 180,
+            player.position.y,
+        ]
+    }
+}
+
+const changeLevel = (transition) => {
+    gsap.to(overlay, {
+        opacity: 1,
+        onComplete: () => {
+            levels[transition.transitTo].init()
+            let newPlayerCoords = makePlayerCoordinates(transition)
+            player.position.x = newPlayerCoords[0]
+            player.position.y = newPlayerCoords[1]
+            playerShadow.position.x = newPlayerCoords[0] - 30
+            playerShadow.position.y = newPlayerCoords[1] + 44
+            gsap.to(overlay, {
+                opacity: 0
+            })
+        }
+    })
+}
+
 let lastDirection = "right"
 function animate() {
     window.requestAnimationFrame(animate)
@@ -122,9 +83,18 @@ function animate() {
     boundaries.forEach(boundary => {
         boundary.draw()
     })
+    transitions.forEach(transition => {
+        transition.draw()
+    })
     playerShadow.draw()
     player.draw()
     foreground.draw()
+
+    c.save()
+    c.globalAlpha = overlay.opacity
+    c.fillStyle = 'black'
+    c.fillRect(0, 0, canvas.width, canvas.height)
+    c.restore()
 
     let moving = true
     player.moving = false
@@ -142,13 +112,28 @@ function animate() {
                     }
                 }
             })) {
-                console.log("colliding")
                 moving = false
                 break
             }
         }
+        for (let i = 0; i < transitions.length; i++) {
+            const transition = transitions[i]
+            if (rectangularCollision({
+                rectangle1: player,
+                rectangle2: {
+                    ...transition, position: {
+                        x: transition.position.x,
+                        y: transition.position.y,
+                    }
+                }
+            })) {
+                moving = false
+                changeLevel(transition)
+                break
+            }
+        }
         if (moving) {
-            if (background.position.y > 0) {
+            if (background.position.y > -5) {
                 moving = false
                 playerMovables.forEach(playerMovable => {
                     playerMovable.position.y -= 5
@@ -183,13 +168,28 @@ function animate() {
                     }
                 }
             })) {
-                console.log("colliding")
                 moving = false
                 break
             }
         }
+        for (let i = 0; i < transitions.length; i++) {
+            const transition = transitions[i]
+            if (rectangularCollision({
+                rectangle1: player,
+                rectangle2: {
+                    ...transition, position: {
+                        x: transition.position.x,
+                        y: transition.position.y,
+                    }
+                }
+            })) {
+                moving = false
+                changeLevel(transition)
+                break
+            }
+        }
         if (moving) {
-            if (background.position.x > 0) {
+            if (background.position.x > -5) {
                 moving = false
                 playerMovables.forEach(playerMovable => {
                     playerMovable.position.x -= 5
@@ -223,13 +223,28 @@ function animate() {
                     }
                 }
             })) {
-                console.log("colliding")
                 moving = false
                 break
             }
         }
+        for (let i = 0; i < transitions.length; i++) {
+            const transition = transitions[i]
+            if (rectangularCollision({
+                rectangle1: player,
+                rectangle2: {
+                    ...transition, position: {
+                        x: transition.position.x,
+                        y: transition.position.y,
+                    }
+                }
+            })) {
+                moving = false
+                changeLevel(transition)
+                break
+            }
+        }
         if (moving) {
-            if (background.position.y < (canvas.height - background.height)) {
+            if (background.position.y < (canvas.height - background.height + 5)) {
                 moving = false
                 playerMovables.forEach(playerMovable => {
                     playerMovable.position.y += 5
@@ -264,13 +279,28 @@ function animate() {
                     }
                 }
             })) {
-                console.log("colliding")
                 moving = false
                 break
             }
         }
+        for (let i = 0; i < transitions.length; i++) {
+            const transition = transitions[i]
+            if (rectangularCollision({
+                rectangle1: player,
+                rectangle2: {
+                    ...transition, position: {
+                        x: transition.position.x,
+                        y: transition.position.y,
+                    }
+                }
+            })) {
+                moving = false
+                changeLevel(transition)
+                break
+            }
+        }
         if (moving) {
-            if (background.position.x < (canvas.width - background.width)) {
+            if (background.position.x < (canvas.width - background.width + 5)) {
                 moving = false
                 playerMovables.forEach(playerMovable => {
                     playerMovable.position.x += 5
@@ -297,7 +327,9 @@ function animate() {
             player.image = player.sprites.right
         }
     }
-    console.log(offsetBuffer)
+    document.getElementById('coordinates').innerHTML = `PLAYER: ${player.position.x}, ${player.position.y}`;
+    document.getElementById('offsetBuffer').innerHTML = `offsetBUFFER: ${offsetBuffer.x}, ${offsetBuffer.y}`;
+    document.getElementById('bgPosition').innerHTML = `BG: ${background.position.x}, ${background.position.y}`;
 }
 
 animate()

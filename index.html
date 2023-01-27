@@ -2,7 +2,7 @@
     body {
         background-color: rgb(80, 80, 20);
         display: flex;
-        justify-content: center;
+        justify-content: left;
         align-items: center;
         margin: 0;
     }
@@ -10,7 +10,16 @@
 
 <body>
     <canvas></canvas>
-    <script src="./data/collisions_0_2.js"></script>
+    <div style="display: flex; flex-direction: column;">
+        <p style="color: white; font-size: large;" id="coordinates"></p>
+        <p style="color: white; font-size: large;" id="offsetBuffer"></p>
+        <p style="color: white; font-size: large;" id="bgPosition"></p>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"
+        integrity="sha512-f8mwTB+Bs8a5c46DEm7HQLcJuHMBaH/UFlcgyetMqqkvTcYg4g5VXsYR71b3qC82lZytjNYvBj2pf0VekA9/FQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="./data/collisions.js"></script>
+    <script src="levels.js"></script>
     <script src="classes.js"></script>
     <script src="index.js"></script>
 </body>
