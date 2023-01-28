@@ -21,6 +21,64 @@ let overlay = {
 let spawn = true
 let level = "0_2"
 let levels = {
+    "0_1": {
+        init: ({ bgPosition }) => {
+            collisionsMap = []
+            boundaries = []
+            background = new Sprite({
+                position: {
+                    x: bgPosition.x,
+                    y: bgPosition.y
+                },
+                imageSrc: "./img/maps/map_0_1.png"
+            })
+            for (let i = 0; i < collisions_0_1.length; i += 30) {
+                collisionsMap.push(collisions_0_1.slice(i, 30 + i))
+            }
+            collisionsMap.forEach((row, i) => {
+                row.forEach((symbol, j) => {
+                    if (symbol === 1665) {
+                        boundaries.push(new Boundary({
+                            position: {
+                                x: j * Boundary.width + bgPosition.x,
+                                y: i * Boundary.height + bgPosition.y
+                            }
+                        }))
+                    }
+                })
+            })
+            foreground = new Sprite({
+                position: {
+                    x: bgPosition.x,
+                    y: bgPosition.y
+                },
+                imageSrc: "./img/maps/foreground_0_1.png"
+            })
+            transitions = [
+                new Sprite({
+                    position: {
+                        x: 0,
+                        y: 740,
+                    },
+                    imageSrc: "./img/transition_horizontal_down.png",
+                    transitTo: "0_2",
+                    bgPosition: {
+                        x: -56,
+                        y: -4
+                    },
+                    offsetBuffer: {
+                        x: 0,
+                        y: 260
+                    },
+                    playerPosition: {
+                        x: 669,
+                        y: 39
+                    }
+                })
+            ]
+            movables = [background, ...boundaries, foreground, ...transitions]
+        }
+    },
     "0_2": {
         init: ({ bgPosition }) => {
             collisionsMap = []
@@ -32,9 +90,9 @@ let levels = {
                 },
                 imageSrc: "./img/maps/map_0_2(Start).png"
             })
-            //for (let i = 0; i < collisions_0_2.length; i += 30) {
-            //    collisionsMap.push(collisions_0_2.slice(i, 30 + i))
-            //}
+            for (let i = 0; i < collisions_0_2.length; i += 30) {
+                collisionsMap.push(collisions_0_2.slice(i, 30 + i))
+            }
             collisionsMap.forEach((row, i) => {
                 row.forEach((symbol, j) => {
                     if (symbol === 1089) {
@@ -78,7 +136,7 @@ let levels = {
                 new Sprite({
                     position: {
                         x: 0,
-                        y: 840,
+                        y: 900,
                     },
                     imageSrc: "./img/transition_horizontal_down.png",
                     transitTo: "0_3",
@@ -93,6 +151,26 @@ let levels = {
                     playerPosition: {
                         x: 669,
                         y: 14
+                    }
+                }),
+                new Sprite({
+                    position: {
+                        x: 0,
+                        y: -300,
+                    },
+                    imageSrc: "./img/transition_horizontal_up.png",
+                    transitTo: "0_1",
+                    bgPosition: {
+                        x: -56,
+                        y: -334
+                    },
+                    offsetBuffer: {
+                        x: 0,
+                        y: -310
+                    },
+                    playerPosition: {
+                        x: 669,
+                        y: 609
                     }
                 }),
             ]
@@ -110,9 +188,9 @@ let levels = {
                 },
                 imageSrc: "./img/maps/map_1_2.png"
             })
-            //for (let i = 0; i < collisions_1_2.length; i += 30) {
-            //    collisionsMap.push(collisions_1_2.slice(i, 30 + i))
-            //}
+            for (let i = 0; i < collisions_1_2.length; i += 30) {
+                collisionsMap.push(collisions_1_2.slice(i, 30 + i))
+            }
             collisionsMap.forEach((row, i) => {
                 row.forEach((symbol, j) => {
                     if (symbol === 1153) {
@@ -230,6 +308,26 @@ let levels = {
                     playerPosition: {
                         x: 700,
                         y: 550
+                    }
+                }),
+                new Sprite({
+                    position: {
+                        x: 0,
+                        y: 0,
+                    },
+                    imageSrc: "./img/transition_vertical_left.png",
+                    transitTo: "0_3",
+                    bgPosition: {
+                        x: -135,
+                        y: -166
+                    },
+                    offsetBuffer: {
+                        x: -585,
+                        y: 0
+                    },
+                    playerPosition: {
+                        x: 1254,
+                        y: 299
                     }
                 }),
             ]
