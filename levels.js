@@ -32,66 +32,6 @@ let levels = {
                 },
                 imageSrc: "./img/maps/map_0_2(Start).png"
             })
-            for (let i = 0; i < collisions_0_2.length; i += 30) {
-                collisionsMap.push(collisions_0_2.slice(i, 30 + i))
-            }
-            collisionsMap.forEach((row, i) => {
-                row.forEach((symbol, j) => {
-                    if (symbol === 1089) {
-                        boundaries.push(new Boundary({
-                            position: {
-                                x: j * Boundary.width + bgPosition.x,
-                                y: i * Boundary.height + bgPosition.y
-                            }
-                        }))
-                    }
-                })
-            })
-            foreground = new Sprite({
-                position: {
-                    x: bgPosition.x,
-                    y: bgPosition.y
-                },
-                imageSrc: "./img/maps/foreground_0_2(Start).png"
-            })
-            transitions = [
-                new Sprite({
-                    position: {
-                        x: 1428,
-                        y: 300,
-                    },
-                    imageSrc: "./img/transition_vertical_right.png",
-                    transitTo: "1_2",
-                    transitDirection: "Right",
-                    bgPosition: {
-                        x: 0,
-                        y: -174
-                    },
-                    offsetBuffer: {
-                        x: 595,
-                        y: 0
-                    },
-                    playerPosition: {
-                        x: 58,
-                        y: 299
-                    }
-                })
-            ]
-            movables = [background, ...boundaries, foreground, ...transitions]
-        }
-    },
-    "1_2": {
-        init: ({ bgPosition }) => {
-            collisionsMap = []
-            boundaries = []
-            console.log("LEVEL 2")
-            background = new Sprite({
-                position: {
-                    x: bgPosition.x,
-                    y: bgPosition.y
-                },
-                imageSrc: "./img/maps/map_1_2.png"
-            })
             //for (let i = 0; i < collisions_0_2.length; i += 30) {
             //    collisionsMap.push(collisions_0_2.slice(i, 30 + i))
             //}
@@ -117,12 +57,89 @@ let levels = {
             transitions = [
                 new Sprite({
                     position: {
+                        x: 1428,
+                        y: 0,
+                    },
+                    imageSrc: "./img/transition_vertical_right.png",
+                    transitTo: "1_2",
+                    bgPosition: {
                         x: 0,
-                        y: 300,
+                        y: -174
+                    },
+                    offsetBuffer: {
+                        x: 595,
+                        y: 0
+                    },
+                    playerPosition: {
+                        x: 58,
+                        y: 299
+                    }
+                }),
+                new Sprite({
+                    position: {
+                        x: 0,
+                        y: 840,
+                    },
+                    imageSrc: "./img/transition_horizontal_down.png",
+                    transitTo: "0_3",
+                    bgPosition: {
+                        x: -55,
+                        y: -56
+                    },
+                    offsetBuffer: {
+                        x: 0,
+                        y: 285
+                    },
+                    playerPosition: {
+                        x: 669,
+                        y: 14
+                    }
+                }),
+            ]
+            movables = [background, ...boundaries, foreground, ...transitions]
+        }
+    },
+    "1_2": {
+        init: ({ bgPosition }) => {
+            collisionsMap = []
+            boundaries = []
+            background = new Sprite({
+                position: {
+                    x: bgPosition.x,
+                    y: bgPosition.y
+                },
+                imageSrc: "./img/maps/map_1_2.png"
+            })
+            //for (let i = 0; i < collisions_1_2.length; i += 30) {
+            //    collisionsMap.push(collisions_1_2.slice(i, 30 + i))
+            //}
+            collisionsMap.forEach((row, i) => {
+                row.forEach((symbol, j) => {
+                    if (symbol === 1153) {
+                        boundaries.push(new Boundary({
+                            position: {
+                                x: j * Boundary.width + bgPosition.x,
+                                y: i * Boundary.height + bgPosition.y
+                            }
+                        }))
+                    }
+                })
+            })
+            foreground = new Sprite({
+                position: {
+                    x: bgPosition.x,
+                    y: bgPosition.y
+                },
+                imageSrc: "./img/maps/foreground_1_2.png"
+            })
+            transitions = [
+                new Sprite({
+                    position: {
+                        x: 0,
+                        y: 0,
                     },
                     imageSrc: "./img/transition_vertical_left.png",
                     transitTo: "0_2",
-                    transitDirection: "Left",
                     bgPosition: {
                         x: -136,
                         y: -174
@@ -135,7 +152,165 @@ let levels = {
                         x: 1304,
                         y: 299
                     }
+                }),
+                new Sprite({
+                    position: {
+                        x: 5,
+                        y: 850,
+                    },
+                    imageSrc: "./img/transition_horizontal_down.png",
+                    transitTo: "1_3",
+                    bgPosition: {
+                        x: -31,
+                        y: -4
+                    },
+                    offsetBuffer: {
+                        x: 0,
+                        y: 240
+                    },
+                    playerPosition: {
+                        x: 669,
+                        y: 59
+                    }
+                }),
+            ]
+            movables = [background, ...boundaries, foreground, ...transitions]
+
+        }
+    },
+    "1_3": {
+        init: ({ bgPosition }) => {
+            collisionsMap = []
+            boundaries = []
+            background = new Sprite({
+                position: {
+                    x: bgPosition.x,
+                    y: bgPosition.y
+                },
+                imageSrc: "./img/maps/map_1_3.png"
+            })
+            for (let i = 0; i < collisions_1_3.length; i += 30) {
+                collisionsMap.push(collisions_1_3.slice(i, 30 + i))
+            }
+            collisionsMap.forEach((row, i) => {
+                row.forEach((symbol, j) => {
+                    if (symbol === 1665) {
+                        boundaries.push(new Boundary({
+                            position: {
+                                x: j * Boundary.width + bgPosition.x,
+                                y: i * Boundary.height + bgPosition.y
+                            }
+                        }))
+                    }
                 })
+            })
+            foreground = new Sprite({
+                position: {
+                    x: bgPosition.x,
+                    y: bgPosition.y
+                },
+                imageSrc: "./img/maps/foreground_1_3.png"
+            })
+            transitions = [
+                new Sprite({
+                    position: {
+                        x: 0,
+                        y: -175,
+                    },
+                    imageSrc: "./img/transition_horizontal_up.png",
+                    transitTo: "1_2",
+                    bgPosition: {
+                        x: 0,
+                        y: -335
+                    },
+                    offsetBuffer: {
+                        x: 0,
+                        y: -255
+                    },
+                    playerPosition: {
+                        x: 700,
+                        y: 550
+                    }
+                }),
+            ]
+            movables = [background, ...boundaries, foreground, ...transitions]
+
+        }
+    },
+    "0_3": {
+        init: ({ bgPosition }) => {
+            collisionsMap = []
+            boundaries = []
+            background = new Sprite({
+                position: {
+                    x: bgPosition.x,
+                    y: bgPosition.y
+                },
+                imageSrc: "./img/maps/map_0_3.png"
+            })
+            for (let i = 0; i < collisions_0_3.length; i += 30) {
+                collisionsMap.push(collisions_0_3.slice(i, 30 + i))
+            }
+            collisionsMap.forEach((row, i) => {
+                row.forEach((symbol, j) => {
+                    if (symbol === 1345) {
+                        boundaries.push(new Boundary({
+                            position: {
+                                x: j * Boundary.width + bgPosition.x,
+                                y: i * Boundary.height + bgPosition.y
+                            }
+                        }))
+                    }
+                })
+            })
+            foreground = new Sprite({
+                position: {
+                    x: bgPosition.x,
+                    y: bgPosition.y
+                },
+                imageSrc: "./img/maps/foreground_0_3.png"
+            })
+            transitions = [
+                new Sprite({
+                    position: {
+                        x: 0,
+                        y: -150,
+                    },
+                    imageSrc: "./img/transition_horizontal_up.png",
+                    transitTo: "0_2",
+                    bgPosition: {
+                        x: -56,
+                        y: -334
+                    },
+                    offsetBuffer: {
+                        x: 0,
+                        y: -310
+                    },
+                    playerPosition: {
+                        x: 669,
+                        y: 609
+                    }
+                }),
+                new Sprite({
+                    position: {
+                        x: 1450,
+                        y: 0,
+                    },
+                    imageSrc: "./img/transition_vertical_right.png",
+                    transitTo: "1_3",
+                    bgPosition: {
+                        x: -1,
+                        y: -164
+                    },
+                    offsetBuffer: {
+                        x: 560,
+                        y: 0
+                    },
+                    playerPosition: {
+                        x: 109,
+                        y: 299
+                    }
+                }),
             ]
             movables = [background, ...boundaries, foreground, ...transitions]
 

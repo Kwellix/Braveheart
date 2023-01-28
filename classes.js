@@ -8,7 +8,7 @@ const PlayerRunningLeftImage = new Image()
 PlayerRunningLeftImage.src = "./img/player/running_left.png"
 
 class Sprite {
-    constructor({ position, imageSrc, frames = { max: 1 }, sprites, transitTo, transitDirection, bgPosition, offsetBuffer, playerPosition }) {
+    constructor({ position, imageSrc, frames = { max: 1 }, sprites, transitTo, bgPosition, offsetBuffer, playerPosition }) {
         this.position = position
         this.image = new Image()
         this.frames = { ...frames, val: 0, elapsed: 0 }
@@ -21,7 +21,6 @@ class Sprite {
         this.moving = false
         this.sprites = sprites
         this.transitTo = transitTo
-        this.transitDirection = transitDirection
         this.offsetBuffer = offsetBuffer
         this.bgPosition = bgPosition
         this.playerPosition = playerPosition
