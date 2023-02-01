@@ -319,6 +319,7 @@ function animate() {
             player.image = player.sprites.right
         }
     }
+    document.getElementById('level').innerHTML = `${level}`;
     document.getElementById('coordinates').innerHTML = `PLAYER: ${player.position.x}, ${player.position.y}`;
     document.getElementById('offsetBuffer').innerHTML = `offsetBUFFER: ${offsetBuffer.x}, ${offsetBuffer.y}`;
     document.getElementById('bgPosition').innerHTML = `BG: ${background.position.x}, ${background.position.y}`;
