@@ -4,6 +4,7 @@ canvas.width = 1400
 canvas.height = 740
 
 let background
+let enemies = []
 let collisionsMap = []
 let movables = []
 let boundaries = []
@@ -19,7 +20,7 @@ let overlay = {
 }
 
 let spawn = true
-let level = "2_4"
+let level = "0_2"
 let levels = {
     "0_1": {
         init: ({ bgPosition }) => {
@@ -105,6 +106,7 @@ let levels = {
             level = "0_2"
             collisionsMap = []
             boundaries = []
+            enemies = []
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -134,6 +136,42 @@ let levels = {
                 },
                 imageSrc: "./img/maps/foreground_0_2(Start).png"
             })
+            enemies.push(
+                new Sprite({
+                    position: {
+                        x: background.image.width / 2,
+                        y: background.image.height / 2
+                    },
+                    frames: {
+                        max: 13
+                    },
+                    imageSrc: "./img/enemies/skeleton.png",
+                }),
+                new Sprite({
+                    position: {
+                        x: background.image.width / 2 - 25,
+                        y: background.image.height / 2 + 75
+                    },
+                    imageSrc: "./img/player/shadow.png",
+                }),
+                new Sprite({
+                    position: {
+                        x: background.image.width / 2 - 200,
+                        y: background.image.height / 2 + 75
+                    },
+                    imageSrc: "./img/player/shadow.png",
+                }),
+                new Sprite({
+                    position: {
+                        x: background.image.width / 2 - 200,
+                        y: background.image.height / 2
+                    },
+                    frames: {
+                        max: 4
+                    },
+                    imageSrc: "./img/enemies/bee.png",
+                }),
+            )
             transitions = [
                 new Sprite({
                     position: {
@@ -196,7 +234,7 @@ let levels = {
                     }
                 }),
             ]
-            movables = [background, ...boundaries, foreground, ...transitions]
+            movables = [background, ...boundaries, foreground, ...transitions, ...enemies]
         }
     },
     "0_3": {

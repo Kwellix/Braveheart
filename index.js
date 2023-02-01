@@ -84,6 +84,10 @@ function animate() {
     })
     playerShadow.draw()
     player.draw()
+    enemies.forEach(enemy => {
+        enemy.draw()
+        enemy.moving = true
+    })
     foreground.draw()
 
     c.save()
