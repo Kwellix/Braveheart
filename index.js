@@ -27,6 +27,10 @@ levels[level].init({
     bgPosition: {
         x: -56,
         y: -174
+    },
+    enemiesOffset: {
+        x: 0,
+        y: 0
     }
 })
 
@@ -57,6 +61,10 @@ const changeLevel = (transition) => {
                 bgPosition: {
                     x: transition.bgPosition.x,
                     y: transition.bgPosition.y
+                },
+                enemiesOffset: {
+                    x: transition.enemiesOffsetData.x,
+                    y: transition.enemiesOffsetData.y
                 }
             })
             player.position.x = transition.playerPosition.x
