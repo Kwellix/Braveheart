@@ -8,6 +8,7 @@ let enemies = []
 let collisionsMap = []
 let movables = []
 let boundaries = []
+let enemyHitboxes = []
 let foreground
 let transitions = []
 let offsetBuffer = {
@@ -19,7 +20,13 @@ let overlay = {
     opacity: 0
 }
 
-let level = "0_2"
+let movingSpeed = 2
+let calcSteps = (amount) => {
+    return parseInt(amount / movingSpeed)
+}
+
+
+let level = "2_2"
 let levels = {
     "0_1": {
         init: ({ bgPosition, enemiesOffset }) => {
@@ -27,6 +34,7 @@ let levels = {
             collisionsMap = []
             boundaries = []
             enemies = []
+            enemyHitboxes = []
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -120,19 +128,55 @@ let levels = {
                         max: 4
                     },
                     imageSrc: "./img/enemies/bee.png",
+                    sprites: {
+                        left: beeLeft,
+                        right: beeRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(240),
+                    movingDirection: "down",
+                    shadow: true,
+                    enemyType: "bee"
                 }),
                 new Sprite({
                     position: {
                         x: 1250 + enemiesOffset.x,
-                        y: -100 + enemiesOffset.y
+                        y: 130 + enemiesOffset.y
                     },
                     frames: {
                         max: 4
                     },
                     imageSrc: "./img/enemies/bee.png",
+                    sprites: {
+                        left: beeLeft,
+                        right: beeRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(240),
+                    movingDirection: "up",
+                    shadow: true,
+                    enemyType: "bee"
                 }),
             )
-            movables = [background, ...boundaries, foreground, ...transitions, ...enemies]
+            enemyHitboxes.push(
+                new Hitbox({
+                    position: {
+                        x: 928 + enemiesOffset.x,
+                        y: -72 + enemiesOffset.y
+                    },
+                    steps: calcSteps(240),
+                    movingDirection: "down",
+                }),
+                new Hitbox({
+                    position: {
+                        x: 1278 + enemiesOffset.x,
+                        y: 158 + enemiesOffset.y
+                    },
+                    steps: calcSteps(240),
+                    movingDirection: "up",
+                }),
+            )
+            movables = [background, ...boundaries, foreground, ...transitions, ...enemies, ...enemyHitboxes]
         }
     },
     "0_2": {
@@ -141,6 +185,7 @@ let levels = {
             collisionsMap = []
             boundaries = []
             enemies = []
+            enemyHitboxes = []
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -254,6 +299,7 @@ let levels = {
             collisionsMap = []
             boundaries = []
             enemies = []
+            enemyHitboxes = []
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -337,7 +383,7 @@ let levels = {
                 new Sprite({
                     position: {
                         x: 740 + enemiesOffset.x,
-                        y: 620 + enemiesOffset.y
+                        y: 600 + enemiesOffset.y
                     },
                     frames: {
                         max: 13
@@ -348,8 +394,10 @@ let levels = {
                         right: skeletonRight,
                     },
                     spriteType: "enemy",
-                    steps: 350,
-                    movingDirection: "left"
+                    steps: calcSteps(630),
+                    movingDirection: "left",
+                    shadow: true,
+                    enemyType: "skeleton"
                 }),
                 new Sprite({
                     position: {
@@ -365,8 +413,10 @@ let levels = {
                         right: beeRight,
                     },
                     spriteType: "enemy",
-                    steps: 130,
+                    steps: calcSteps(228),
                     movingDirection: "right",
+                    shadow: true,
+                    enemyType: "bee"
                 }),
                 new Sprite({
                     position: {
@@ -382,11 +432,39 @@ let levels = {
                         right: beeRight,
                     },
                     spriteType: "enemy",
-                    steps: 130,
-                    movingDirection: "left"
+                    steps: calcSteps(228),
+                    movingDirection: "left",
+                    shadow: true,
+                    enemyType: "bee"
                 }),
             )
-            movables = [background, ...boundaries, foreground, ...transitions, ...enemies]
+            enemyHitboxes.push(
+                new Hitbox({
+                    position: {
+                        x: 28 + enemiesOffset.x,
+                        y: 248 + enemiesOffset.y
+                    },
+                    steps: calcSteps(228),
+                    movingDirection: "right",
+                }),
+                new Hitbox({
+                    position: {
+                        x: 198 + enemiesOffset.x,
+                        y: 478 + enemiesOffset.y
+                    },
+                    steps: calcSteps(228),
+                    movingDirection: "left",
+                }),
+                new Hitbox({
+                    position: {
+                        x: 750 + enemiesOffset.x,
+                        y: 660 + enemiesOffset.y
+                    },
+                    steps: calcSteps(630),
+                    movingDirection: "left",
+                }),
+            )
+            movables = [background, ...boundaries, foreground, ...transitions, ...enemies, ...enemyHitboxes]
 
         }
     },
@@ -548,6 +626,7 @@ let levels = {
             collisionsMap = []
             boundaries = []
             enemies = []
+            enemyHitboxes = []
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -630,26 +709,89 @@ let levels = {
             enemies.push(
                 new Sprite({
                     position: {
-                        x: 230 + enemiesOffset.x,
-                        y: 430 + enemiesOffset.y
+                        x: 1130 + enemiesOffset.x,
+                        y: 390 + enemiesOffset.y
                     },
                     frames: {
                         max: 13
                     },
                     imageSrc: "./img/enemies/skeleton.png",
+                    sprites: {
+                        left: skeletonLeft,
+                        right: skeletonRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(900),
+                    movingDirection: "left",
+                    shadow: true,
+                    enemyType: "skeleton"
                 }),
                 new Sprite({
                     position: {
-                        x: 1175 + enemiesOffset.x,
+                        x: 230 + enemiesOffset.x,
+                        y: 450 + enemiesOffset.y
+                    },
+                    frames: {
+                        max: 13
+                    },
+                    imageSrc: "./img/enemies/skeleton.png",
+                    sprites: {
+                        left: skeletonLeft,
+                        right: skeletonRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(900),
+                    movingDirection: "right",
+                    shadow: true,
+                    enemyType: "skeleton"
+                }),
+                new Sprite({
+                    position: {
+                        x: 1160 + enemiesOffset.x,
                         y: 430 + enemiesOffset.y
                     },
                     frames: {
                         max: 13
                     },
                     imageSrc: "./img/enemies/skeleton.png",
+                    sprites: {
+                        left: skeletonLeft,
+                        right: skeletonRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(360),
+                    movingDirection: "up",
+                    shadow: true,
+                    enemyType: "skeleton"
                 }),
             )
-            movables = [background, ...boundaries, foreground, ...transitions, ...enemies]
+            enemyHitboxes.push(
+                new Hitbox({
+                    position: {
+                        x: 1140 + enemiesOffset.x,
+                        y: 450 + enemiesOffset.y
+                    },
+                    steps: calcSteps(900),
+                    movingDirection: "left",
+                }),
+                new Hitbox({
+                    position: {
+                        x: 240 + enemiesOffset.x,
+                        y: 510 + enemiesOffset.y
+                    },
+                    steps: calcSteps(900),
+                    movingDirection: "right",
+                }),
+                new Hitbox({
+                    position: {
+                        x: 1170 + enemiesOffset.x,
+                        y: 490 + enemiesOffset.y
+                    },
+                    steps: calcSteps(360),
+                    movingDirection: "up",
+                }),
+            )
+            movables = [background, ...boundaries, foreground, ...transitions, ...enemies, ...enemyHitboxes]
 
         }
     },
@@ -659,6 +801,7 @@ let levels = {
             collisionsMap = []
             boundaries = []
             enemies = []
+            enemyHitboxes = []
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -741,13 +884,22 @@ let levels = {
             enemies.push(
                 new Sprite({
                     position: {
-                        x: 75 + enemiesOffset.x,
-                        y: 175 + enemiesOffset.y
+                        x: 250 + enemiesOffset.x,
+                        y: 245 + enemiesOffset.y
                     },
                     frames: {
                         max: 4
                     },
                     imageSrc: "./img/enemies/bee.png",
+                    sprites: {
+                        left: beeLeft,
+                        right: beeRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(1125),
+                    movingDirection: "right",
+                    shadow: true,
+                    enemyType: "bee"
                 }),
                 new Sprite({
                     position: {
@@ -758,20 +910,63 @@ let levels = {
                         max: 4
                     },
                     imageSrc: "./img/enemies/bee.png",
+                    sprites: {
+                        left: beeLeft,
+                        right: beeRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(500),
+                    movingDirection: "up",
+                    shadow: true,
+                    enemyType: "bee"
                 }),
                 new Sprite({
                     position: {
-                        //x: 1600 / 2 - 500 + enemiesOffset.x,
-                        x: 1800 / 2 - 500 + enemiesOffset.x,
-                        y: 375 + enemiesOffset.y
+                        x: 1400 + enemiesOffset.x,
+                        y: 450 + enemiesOffset.y
                     },
                     frames: {
                         max: 4
                     },
                     imageSrc: "./img/enemies/bee.png",
+                    sprites: {
+                        left: beeLeft,
+                        right: beeRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(1125),
+                    movingDirection: "left",
+                    shadow: true,
+                    enemyType: "bee"
                 }),
             )
-            movables = [background, ...boundaries, foreground, ...transitions, ...enemies]
+            enemyHitboxes.push(
+                new Hitbox({
+                    position: {
+                        x: 278 + enemiesOffset.x,
+                        y: 273 + enemiesOffset.y
+                    },
+                    steps: calcSteps(1125),
+                    movingDirection: "right",
+                }),
+                new Hitbox({
+                    position: {
+                        x: 743 + enemiesOffset.x,
+                        y: 298 + enemiesOffset.y
+                    },
+                    steps: calcSteps(500),
+                    movingDirection: "up",
+                }),
+                new Hitbox({
+                    position: {
+                        x: 1428 + enemiesOffset.x,
+                        y: 478 + enemiesOffset.y
+                    },
+                    steps: calcSteps(1125),
+                    movingDirection: "left",
+                }),
+            )
+            movables = [background, ...boundaries, foreground, ...transitions, ...enemies, ...enemyHitboxes]
 
         }
     },
@@ -781,6 +976,7 @@ let levels = {
             collisionsMap = []
             boundaries = []
             enemies = []
+            enemyHitboxes = []
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -863,23 +1059,41 @@ let levels = {
             enemies.push(
                 new Sprite({
                     position: {
-                        x: 650 + enemiesOffset.x,
+                        x: 630 + enemiesOffset.x,
                         y: 375 + enemiesOffset.y
                     },
                     frames: {
                         max: 13
                     },
                     imageSrc: "./img/enemies/skeleton.png",
+                    sprites: {
+                        left: skeletonLeft,
+                        right: skeletonRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(300),
+                    movingDirection: "right",
+                    shadow: true,
+                    enemyType: "skeleton"
                 }),
                 new Sprite({
                     position: {
-                        x: 310 + enemiesOffset.x,
+                        x: 290 + enemiesOffset.x,
                         y: 375 + enemiesOffset.y
                     },
                     frames: {
                         max: 13
                     },
                     imageSrc: "./img/enemies/skeleton.png",
+                    sprites: {
+                        left: skeletonLeft,
+                        right: skeletonRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(300),
+                    movingDirection: "right",
+                    shadow: true,
+                    enemyType: "skeleton"
                 }),
                 new Sprite({
                     position: {
@@ -890,6 +1104,15 @@ let levels = {
                         max: 4
                     },
                     imageSrc: "./img/enemies/bee.png",
+                    sprites: {
+                        left: beeLeft,
+                        right: beeRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(350),
+                    movingDirection: "down",
+                    shadow: true,
+                    enemyType: "bee"
                 }),
                 new Sprite({
                     position: {
@@ -900,9 +1123,79 @@ let levels = {
                         max: 4
                     },
                     imageSrc: "./img/enemies/bee.png",
+                    sprites: {
+                        left: beeLeft,
+                        right: beeRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(350),
+                    movingDirection: "up",
+                    shadow: true,
+                    enemyType: "bee"
+                }),
+                new Sprite({
+                    position: {
+                        x: 450 + enemiesOffset.x,
+                        y: 390 + enemiesOffset.y
+                    },
+                    frames: {
+                        max: 4
+                    },
+                    imageSrc: "./img/enemies/bee.png",
+                    sprites: {
+                        left: beeLeft,
+                        right: beeRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(300),
+                    movingDirection: "right",
+                    shadow: true,
+                    enemyType: "bee"
                 }),
             )
-            movables = [background, ...boundaries, foreground, ...transitions, ...enemies]
+            enemyHitboxes.push(
+                new Hitbox({
+                    position: {
+                        x: 640 + enemiesOffset.x,
+                        y: 435 + enemiesOffset.y
+                    },
+                    steps: calcSteps(300),
+                    movingDirection: "right",
+                }),
+                new Hitbox({
+                    position: {
+                        x: 300 + enemiesOffset.x,
+                        y: 435 + enemiesOffset.y
+                    },
+                    steps: calcSteps(300),
+                    movingDirection: "right",
+                }),
+                new Hitbox({
+                    position: {
+                        x: 918 + enemiesOffset.x,
+                        y: 438 + enemiesOffset.y
+                    },
+                    steps: calcSteps(350),
+                    movingDirection: "down",
+                }),
+                new Hitbox({
+                    position: {
+                        x: 308 + enemiesOffset.x,
+                        y: 805 + enemiesOffset.y
+                    },
+                    steps: calcSteps(350),
+                    movingDirection: "up",
+                }),
+                new Hitbox({
+                    position: {
+                        x: 478 + enemiesOffset.x,
+                        y: 418 + enemiesOffset.y
+                    },
+                    steps: calcSteps(300),
+                    movingDirection: "right",
+                }),
+            )
+            movables = [background, ...boundaries, foreground, ...transitions, ...enemies, ...enemyHitboxes]
 
         }
     },
@@ -1261,6 +1554,7 @@ let levels = {
             collisionsMap = []
             boundaries = []
             enemies = []
+            enemyHitboxes = []
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -1350,6 +1644,15 @@ let levels = {
                         max: 4
                     },
                     imageSrc: "./img/enemies/bee.png",
+                    sprites: {
+                        left: beeLeft,
+                        right: beeRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(240),
+                    movingDirection: "left",
+                    shadow: true,
+                    enemyType: "bee"
                 }),
                 new Sprite({
                     position: {
@@ -1360,9 +1663,36 @@ let levels = {
                         max: 4
                     },
                     imageSrc: "./img/enemies/bee.png",
+                    sprites: {
+                        left: beeLeft,
+                        right: beeRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(240),
+                    movingDirection: "right",
+                    shadow: true,
+                    enemyType: "bee"
                 }),
             )
-            movables = [background, ...boundaries, foreground, ...transitions, ...enemies]
+            enemyHitboxes.push(
+                new Hitbox({
+                    position: {
+                        x: 828 + enemiesOffset.x,
+                        y: 678 + enemiesOffset.y
+                    },
+                    steps: calcSteps(240),
+                    movingDirection: "left",
+                }),
+                new Hitbox({
+                    position: {
+                        x: 603 + enemiesOffset.x,
+                        y: 478 + enemiesOffset.y
+                    },
+                    steps: calcSteps(240),
+                    movingDirection: "right",
+                }),
+            )
+            movables = [background, ...boundaries, foreground, ...transitions, ...enemies, ...enemyHitboxes]
 
         }
     },
@@ -1372,6 +1702,7 @@ let levels = {
             collisionsMap = []
             boundaries = []
             enemies = []
+            enemyHitboxes = []
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -1461,19 +1792,55 @@ let levels = {
                         max: 13
                     },
                     imageSrc: "./img/enemies/skeleton.png",
+                    sprites: {
+                        left: skeletonLeft,
+                        right: skeletonRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(240),
+                    movingDirection: "left",
+                    shadow: true,
+                    enemyType: "skeleton"
                 }),
                 new Sprite({
                     position: {
-                        x: 830 + enemiesOffset.x,
+                        x: 590 + enemiesOffset.x,
                         y: 270 + enemiesOffset.y
                     },
                     frames: {
                         max: 13
                     },
                     imageSrc: "./img/enemies/skeleton.png",
+                    sprites: {
+                        left: skeletonLeft,
+                        right: skeletonRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(240),
+                    movingDirection: "right",
+                    shadow: true,
+                    enemyType: "skeleton"
                 }),
             )
-            movables = [background, ...boundaries, foreground, ...transitions, ...enemies]
+            enemyHitboxes.push(
+                new Hitbox({
+                    position: {
+                        x: 840 + enemiesOffset.x,
+                        y: 0 + enemiesOffset.y
+                    },
+                    steps: calcSteps(240),
+                    movingDirection: "left",
+                }),
+                new Hitbox({
+                    position: {
+                        x: 600 + enemiesOffset.x,
+                        y: 330 + enemiesOffset.y
+                    },
+                    steps: calcSteps(240),
+                    movingDirection: "right",
+                }),
+            )
+            movables = [background, ...boundaries, foreground, ...transitions, ...enemies, ...enemyHitboxes]
 
         }
     },

@@ -1,3 +1,8 @@
+let keyBlock = false
+let startScreenToggle = true
+let musicStart = false
+let runSound = false
+let deathSound = false
 const player = new Sprite({
     position: {
         x: canvas.width / 2 - 31,
@@ -11,7 +16,9 @@ const player = new Sprite({
         left: PlayerStandingLeftImage,
         right: PlayerStandingRightImage,
         runningLeft: PlayerRunningLeftImage,
-        runningRight: PlayerRunningRightImage
+        runningRight: PlayerRunningRightImage,
+        deadLeft: PlayerDeadLeftImage,
+        deadRight: PlayerDeadRightImage
     }
 })
 
@@ -21,6 +28,22 @@ const playerShadow = new Sprite({
         y: player.position.y + 44
     },
     imageSrc: "./img/player/shadow.png",
+})
+
+const deathScreen = new Sprite({
+    position: {
+        x: 0,
+        y: 0
+    },
+    imageSrc: "./img/deathScreen.png",
+})
+
+const startScreen = new Sprite({
+    position: {
+        x: 0,
+        y: 0
+    },
+    imageSrc: "./img/startScreen.png",
 })
 
 levels[level].init({
@@ -38,9 +61,27 @@ const keys = {
     w: { pressed: false },
     a: { pressed: false },
     s: { pressed: false },
-    d: { pressed: false }
+    d: { pressed: false },
+    space: { pressed: false },
 }
 
+const checkIfRunning = () => {
+    if (!keyBlock) {
+        let data = Object.entries(keys)
+        let isRunning = false
+        for (let i = 0; i < data.length - 1; i++) {
+            if (data[i][1].pressed) {
+                if (!runSound) {
+                    audio.Run.play()
+                    runSound = true
+                    break
+                }
+                isRunning = true
+            }
+        }
+        if (!isRunning) audio.Run.stop()
+    }
+}
 
 const playerMovables = [player, playerShadow]
 
@@ -51,6 +92,61 @@ function rectangularCollision({ rectangle1, rectangle2 }) {
         rectangle1.position.y <= rectangle2.position.y + rectangle2.height &&
         rectangle1.position.y + rectangle1.height >= rectangle2.position.y
     )
+}
+
+const restart = () => {
+    gsap.to(overlay, {
+        opacity: 1,
+        onComplete: () => {
+            levels["0_2"].init({
+                bgPosition: {
+                    x: -56,
+                    y: -174
+                },
+                enemiesOffset: {
+                    x: 0,
+                    y: 0
+                }
+            })
+            player.position.x = 669
+            player.position.y = 299
+            playerShadow.position.x = player.position.x - 30
+            playerShadow.position.y = player.position.y + 44
+            offsetBuffer.x = 0
+            offsetBuffer.y = 0
+            lastDirection = "right"
+            player.image = PlayerStandingRightImage
+            player.frames.val = 0
+            player.frames.elapsed = 0
+            keyBlock = false
+            player.dead = false
+            deathSound = false
+            gsap.to(overlay, {
+                opacity: 0
+            })
+        }
+    })
+}
+
+const deathDetect = () => {
+    audio.Run.stop()
+    player.dead = true
+    if (!deathSound) {
+        audio.Death.play()
+        deathSound = true
+    }
+    gsap.to(player.frames, {
+        val: 6,
+        onComplete: () => {
+            keyBlock = true
+        },
+        duration: 0.5,
+        modifiers: {
+            val: function (x) {
+                return parseInt(x);
+            }
+        }
+    })
 }
 
 const changeLevel = (transition) => {
@@ -80,6 +176,7 @@ const changeLevel = (transition) => {
     })
 }
 
+
 let lastDirection = "right"
 function animate() {
     window.requestAnimationFrame(animate)
@@ -96,7 +193,14 @@ function animate() {
         enemy.draw()
         enemy.moving = true
     })
+    enemyHitboxes.forEach(hitbox => {
+        hitbox.draw()
+    })
     foreground.draw()
+
+    checkIfRunning()
+    if (keyBlock) deathScreen.draw()
+    if (startScreenToggle) startScreen.draw()
 
     c.save()
     c.globalAlpha = overlay.opacity
@@ -106,229 +210,256 @@ function animate() {
 
     let moving = true
     player.moving = false
-    if (keys.w.pressed) {
-        player.moving = true
-        lastDirection == "right" ? player.image = player.sprites.runningRight : player.image = player.sprites.runningLeft
-        for (let i = 0; i < boundaries.length; i++) {
-            const boundary = boundaries[i]
-            if (rectangularCollision({
-                rectangle1: player,
-                rectangle2: {
-                    ...boundary, position: {
-                        x: boundary.position.x,
-                        y: boundary.position.y + 5,
-                    }
+
+    //Detect hitbox collision
+    for (let i = 0; i < enemyHitboxes.length; i++) {
+        const hitbox = enemyHitboxes[i]
+        if (rectangularCollision({
+            rectangle1: player,
+            rectangle2: {
+                ...hitbox, position: {
+                    x: hitbox.position.x,
+                    y: hitbox.position.y,
                 }
-            })) {
-                moving = false
-                break
             }
+        })) {
+            lastDirection == "right" ? player.image = player.sprites.deadRight : player.image = player.sprites.deadLeft
+            deathDetect()
         }
-        for (let i = 0; i < transitions.length; i++) {
-            const transition = transitions[i]
-            if (rectangularCollision({
-                rectangle1: player,
-                rectangle2: {
-                    ...transition, position: {
-                        x: transition.position.x,
-                        y: transition.position.y,
+    }
+
+    if (!keyBlock) {
+        if (keys.w.pressed) {
+            player.moving = true
+            if (!player.dead) lastDirection == "right" ? player.image = player.sprites.runningRight : player.image = player.sprites.runningLeft
+            for (let i = 0; i < boundaries.length; i++) {
+                const boundary = boundaries[i]
+                if (rectangularCollision({
+                    rectangle1: player,
+                    rectangle2: {
+                        ...boundary, position: {
+                            x: boundary.position.x,
+                            y: boundary.position.y + 5,
+                        }
                     }
+                })) {
+                    moving = false
+                    break
                 }
-            })) {
-                changeLevel(transition)
-                break
             }
-        }
-        if (moving) {
-            if (background.position.y > -5) {
-                moving = false
-                playerMovables.forEach(playerMovable => {
-                    playerMovable.position.y -= 5
-                })
-                offsetBuffer.y += 5
-            } else {
-                if (offsetBuffer.y != 0) {
+            for (let i = 0; i < transitions.length; i++) {
+                const transition = transitions[i]
+                if (rectangularCollision({
+                    rectangle1: player,
+                    rectangle2: {
+                        ...transition, position: {
+                            x: transition.position.x,
+                            y: transition.position.y,
+                        }
+                    }
+                })) {
+                    changeLevel(transition)
+                    break
+                }
+            }
+            if (moving) {
+                if (background.position.y > -5) {
+                    moving = false
                     playerMovables.forEach(playerMovable => {
                         playerMovable.position.y -= 5
                     })
                     offsetBuffer.y += 5
                 } else {
-                    movables.forEach(movable => {
-                        movable.position.y += 5
-                    })
-                }
-            }
-        }
-    }
-    if (keys.a.pressed) {
-        player.moving = true
-        player.image = player.sprites.runningLeft
-        lastDirection = "left"
-        for (let i = 0; i < boundaries.length; i++) {
-            const boundary = boundaries[i]
-            if (rectangularCollision({
-                rectangle1: player,
-                rectangle2: {
-                    ...boundary, position: {
-                        x: boundary.position.x + 5,
-                        y: boundary.position.y,
+                    if (offsetBuffer.y != 0) {
+                        playerMovables.forEach(playerMovable => {
+                            playerMovable.position.y -= 5
+                        })
+                        offsetBuffer.y += 5
+                    } else {
+                        movables.forEach(movable => {
+                            movable.position.y += 5
+                        })
                     }
                 }
-            })) {
-                moving = false
-                break
             }
         }
-        for (let i = 0; i < transitions.length; i++) {
-            const transition = transitions[i]
-            if (rectangularCollision({
-                rectangle1: player,
-                rectangle2: {
-                    ...transition, position: {
-                        x: transition.position.x,
-                        y: transition.position.y,
+        if (keys.a.pressed) {
+            player.moving = true
+            if (!player.dead) player.image = player.sprites.runningLeft
+            lastDirection = "left"
+            for (let i = 0; i < boundaries.length; i++) {
+                const boundary = boundaries[i]
+                if (rectangularCollision({
+                    rectangle1: player,
+                    rectangle2: {
+                        ...boundary, position: {
+                            x: boundary.position.x + 5,
+                            y: boundary.position.y,
+                        }
                     }
+                })) {
+                    moving = false
+                    break
                 }
-            })) {
-                changeLevel(transition)
-                break
             }
-        }
-        if (moving) {
-            if (background.position.x > -5) {
-                moving = false
-                playerMovables.forEach(playerMovable => {
-                    playerMovable.position.x -= 5
-                })
-                offsetBuffer.x += 5
-            } else {
-                if (offsetBuffer.x != 0) {
+            for (let i = 0; i < transitions.length; i++) {
+                const transition = transitions[i]
+                if (rectangularCollision({
+                    rectangle1: player,
+                    rectangle2: {
+                        ...transition, position: {
+                            x: transition.position.x,
+                            y: transition.position.y,
+                        }
+                    }
+                })) {
+                    changeLevel(transition)
+                    break
+                }
+            }
+            if (moving) {
+                if (background.position.x > -5) {
+                    moving = false
                     playerMovables.forEach(playerMovable => {
                         playerMovable.position.x -= 5
                     })
                     offsetBuffer.x += 5
                 } else {
-                    movables.forEach(movable => {
-                        movable.position.x += 5
-                    })
-                }
-            }
-        }
-    }
-    if (keys.s.pressed) {
-        player.moving = true
-        lastDirection == "right" ? player.image = player.sprites.runningRight : player.image = player.sprites.runningLeft
-        for (let i = 0; i < boundaries.length; i++) {
-            const boundary = boundaries[i]
-            if (rectangularCollision({
-                rectangle1: player,
-                rectangle2: {
-                    ...boundary, position: {
-                        x: boundary.position.x,
-                        y: boundary.position.y - 5,
+                    if (offsetBuffer.x != 0) {
+                        playerMovables.forEach(playerMovable => {
+                            playerMovable.position.x -= 5
+                        })
+                        offsetBuffer.x += 5
+                    } else {
+                        movables.forEach(movable => {
+                            movable.position.x += 5
+                        })
                     }
                 }
-            })) {
-                moving = false
-                break
             }
         }
-        for (let i = 0; i < transitions.length; i++) {
-            const transition = transitions[i]
-            if (rectangularCollision({
-                rectangle1: player,
-                rectangle2: {
-                    ...transition, position: {
-                        x: transition.position.x,
-                        y: transition.position.y,
+        if (keys.s.pressed) {
+            player.moving = true
+            if (!player.dead) lastDirection == "right" ? player.image = player.sprites.runningRight : player.image = player.sprites.runningLeft
+            for (let i = 0; i < boundaries.length; i++) {
+                const boundary = boundaries[i]
+                if (rectangularCollision({
+                    rectangle1: player,
+                    rectangle2: {
+                        ...boundary, position: {
+                            x: boundary.position.x,
+                            y: boundary.position.y - 5,
+                        }
                     }
+                })) {
+                    moving = false
+                    break
                 }
-            })) {
-                changeLevel(transition)
-                break
             }
-        }
-        if (moving) {
-            if (background.position.y < (canvas.height - background.height + 5)) {
-                moving = false
-                playerMovables.forEach(playerMovable => {
-                    playerMovable.position.y += 5
-                })
-                offsetBuffer.y -= 5
-            } else {
-                if (offsetBuffer.y != 0) {
+            for (let i = 0; i < transitions.length; i++) {
+                const transition = transitions[i]
+                if (rectangularCollision({
+                    rectangle1: player,
+                    rectangle2: {
+                        ...transition, position: {
+                            x: transition.position.x,
+                            y: transition.position.y,
+                        }
+                    }
+                })) {
+                    changeLevel(transition)
+                    break
+                }
+            }
+            if (moving) {
+                if (background.position.y < (canvas.height - background.height + 5)) {
+                    moving = false
                     playerMovables.forEach(playerMovable => {
                         playerMovable.position.y += 5
                     })
                     offsetBuffer.y -= 5
                 } else {
-                    movables.forEach(movable => {
-                        movable.position.y -= 5
-                    })
-                }
-            }
-        }
-    }
-    if (keys.d.pressed) {
-        player.moving = true
-        player.image = player.sprites.runningRight
-        lastDirection = "right"
-        for (let i = 0; i < boundaries.length; i++) {
-            const boundary = boundaries[i]
-            if (rectangularCollision({
-                rectangle1: player,
-                rectangle2: {
-                    ...boundary, position: {
-                        x: boundary.position.x - 5,
-                        y: boundary.position.y,
+                    if (offsetBuffer.y != 0) {
+                        playerMovables.forEach(playerMovable => {
+                            playerMovable.position.y += 5
+                        })
+                        offsetBuffer.y -= 5
+                    } else {
+                        movables.forEach(movable => {
+                            movable.position.y -= 5
+                        })
                     }
                 }
-            })) {
-                moving = false
-                break
             }
         }
-        for (let i = 0; i < transitions.length; i++) {
-            const transition = transitions[i]
-            if (rectangularCollision({
-                rectangle1: player,
-                rectangle2: {
-                    ...transition, position: {
-                        x: transition.position.x,
-                        y: transition.position.y,
+        if (keys.d.pressed) {
+            player.moving = true
+            if (!player.dead) player.image = player.sprites.runningRight
+            lastDirection = "right"
+            for (let i = 0; i < boundaries.length; i++) {
+                const boundary = boundaries[i]
+                if (rectangularCollision({
+                    rectangle1: player,
+                    rectangle2: {
+                        ...boundary, position: {
+                            x: boundary.position.x - 5,
+                            y: boundary.position.y,
+                        }
                     }
+                })) {
+                    moving = false
+                    break
                 }
-            })) {
-                changeLevel(transition)
-                break
             }
-        }
-        if (moving) {
-            if (background.position.x < (canvas.width - background.width + 5)) {
-                moving = false
-                playerMovables.forEach(playerMovable => {
-                    playerMovable.position.x += 5
-                })
-                offsetBuffer.x -= 5
-            } else {
-                if (offsetBuffer.x != 0) {
+            for (let i = 0; i < transitions.length; i++) {
+                const transition = transitions[i]
+                if (rectangularCollision({
+                    rectangle1: player,
+                    rectangle2: {
+                        ...transition, position: {
+                            x: transition.position.x,
+                            y: transition.position.y,
+                        }
+                    }
+                })) {
+                    changeLevel(transition)
+                    break
+                }
+            }
+            if (moving) {
+                if (background.position.x < (canvas.width - background.width + 5)) {
+                    moving = false
                     playerMovables.forEach(playerMovable => {
                         playerMovable.position.x += 5
                     })
                     offsetBuffer.x -= 5
                 } else {
-                    movables.forEach(movable => {
-                        movable.position.x -= 5
-                    })
+                    if (offsetBuffer.x != 0) {
+                        playerMovables.forEach(playerMovable => {
+                            playerMovable.position.x += 5
+                        })
+                        offsetBuffer.x -= 5
+                    } else {
+                        movables.forEach(movable => {
+                            movable.position.x -= 5
+                        })
+                    }
                 }
             }
         }
+    } else {
+        if (keys.space.pressed) {
+            restart()
+        }
     }
-    if (!player.moving) {
-        if (lastDirection == "left") {
-            player.image = player.sprites.left
-        } else if (lastDirection == "right") {
-            player.image = player.sprites.right
+
+    if (!player.dead) {
+        if (!player.moving) {
+            if (lastDirection == "left") {
+                player.image = player.sprites.left
+            } else if (lastDirection == "right") {
+                player.image = player.sprites.right
+            }
         }
     }
     document.getElementById('level').innerHTML = `${level}`;
@@ -340,17 +471,34 @@ function animate() {
 animate()
 
 window.addEventListener('keydown', (e) => {
+    startScreenToggle = false
+    if (!musicStart) {
+        audio.Map.play()
+        musicStart = true
+    }
     switch (e.key) {
         case 'w':
+            keys.w.pressed = true
+            break;
+        case 'ц':
             keys.w.pressed = true
             break;
         case 'a':
             keys.a.pressed = true
             break;
+        case 'ф':
+            keys.a.pressed = true
+            break;
         case 's':
             keys.s.pressed = true
             break;
+        case 'і':
+            keys.s.pressed = true
+            break;
         case 'd':
+            keys.d.pressed = true
+            break;
+        case 'в':
             keys.d.pressed = true
             break;
         case 'ArrowUp':
@@ -364,22 +512,38 @@ window.addEventListener('keydown', (e) => {
             break;
         case 'ArrowRight':
             keys.d.pressed = true
+            break;
+        case ' ':
+            keys.space.pressed = true
             break;
     }
 })
 
 window.addEventListener('keyup', (e) => {
+    runSound = false
     switch (e.key) {
         case 'w':
+            keys.w.pressed = false
+            break;
+        case 'ц':
             keys.w.pressed = false
             break;
         case 'a':
             keys.a.pressed = false
             break;
+        case 'ф':
+            keys.a.pressed = false
+            break;
         case 's':
             keys.s.pressed = false
             break;
+        case 'і':
+            keys.s.pressed = false
+            break;
         case 'd':
+            keys.d.pressed = false
+            break;
+        case 'в':
             keys.d.pressed = false
             break;
         case 'ArrowUp':
@@ -393,6 +557,9 @@ window.addEventListener('keyup', (e) => {
             break;
         case 'ArrowRight':
             keys.d.pressed = false
+            break;
+        case ' ':
+            keys.space.pressed = false
             break;
     }
 })

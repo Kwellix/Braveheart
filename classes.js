@@ -6,6 +6,10 @@ const PlayerRunningRightImage = new Image()
 PlayerRunningRightImage.src = "./img/player/running_right.png"
 const PlayerRunningLeftImage = new Image()
 PlayerRunningLeftImage.src = "./img/player/running_left.png"
+const PlayerDeadLeftImage = new Image()
+PlayerDeadLeftImage.src = "./img/player/deadLeft.png"
+const PlayerDeadRightImage = new Image()
+PlayerDeadRightImage.src = "./img/player/deadRight.png"
 const beeLeft = new Image()
 beeLeft.src = "./img/enemies/bee.png"
 const beeRight = new Image()
@@ -14,9 +18,12 @@ const skeletonLeft = new Image()
 skeletonLeft.src = "./img/enemies/skeleton.png"
 const skeletonRight = new Image()
 skeletonRight.src = "./img/enemies/skeletonRight.png"
+const shadow = new Image()
+shadow.src = "./img/enemies/shadow.png"
+
 
 class Sprite {
-    constructor({ position, imageSrc, frames = { max: 1 }, sprites, transitTo, bgPosition, offsetBuffer, playerPosition, spriteType, enemiesOffsetData, steps, movingDirection }) {
+    constructor({ position, imageSrc, frames = { max: 1 }, sprites, transitTo, bgPosition, offsetBuffer, playerPosition, spriteType, enemiesOffsetData, steps, movingDirection, shadow = false, enemyType, dead = false }) {
         this.position = position
         this.image = new Image()
         this.frames = { ...frames, val: 0, elapsed: 0 }
@@ -37,7 +44,9 @@ class Sprite {
         this.stepsAmount = steps
         this.stepsCount = 0
         this.moveForward = true
-        this.movingSpeed = 1.75
+        this.shadow = shadow
+        this.enemyType = enemyType
+        this.dead = dead
     }
 
     draw() {
@@ -55,6 +64,22 @@ class Sprite {
             this.image.height
         )
 
+        if (this.shadow) {
+            if (this.enemyType == "bee") {
+                c.drawImage(
+                    shadow,
+                    this.position.x + 17,
+                    this.position.y + 70,
+                )
+            }
+            if (this.enemyType == "skeleton") {
+                c.drawImage(
+                    shadow,
+                    this.position.x + 3,
+                    this.position.y + 82,
+                )
+            }
+        }
 
         if (this.moving) {
             if (this.frames.max > 1) {
@@ -66,16 +91,20 @@ class Sprite {
                 else this.frames.val = 0
             }
         }
+
         if (this.spriteType == "enemy") {
             if (this.moveForward) {
                 if (this.stepsCount <= this.stepsAmount) {
                     if (this.movingDirection == "right") {
-                        this.position.x += this.movingSpeed
+                        this.position.x += movingSpeed
                         this.image = this.sprites.right
                     }
-                    if (this.movingDirection == "left") this.position.x -= this.movingSpeed
-                    if (this.movingDirection == "up") this.position.y += this.movingSpeed
-                    if (this.movingDirection == "down") this.position.y -= this.movingSpeed
+                    if (this.movingDirection == "left") {
+                        this.position.x -= movingSpeed
+                        this.image = this.sprites.left
+                    }
+                    if (this.movingDirection == "up") this.position.y -= movingSpeed
+                    if (this.movingDirection == "down") this.position.y += movingSpeed
                     this.stepsCount++
                 }
                 if (this.stepsCount == this.stepsAmount) {
@@ -85,12 +114,15 @@ class Sprite {
             } else {
                 if (this.stepsCount <= this.stepsAmount) {
                     if (this.movingDirection == "right") {
-                        this.position.x -= this.movingSpeed
+                        this.position.x -= movingSpeed
                         this.image = this.sprites.left
                     }
-                    if (this.movingDirection == "left") this.position.x += this.movingSpeed
-                    if (this.movingDirection == "up") this.position.y -= this.movingSpeed
-                    if (this.movingDirection == "down") this.position.y += this.movingSpeed
+                    if (this.movingDirection == "left") {
+                        this.position.x += movingSpeed
+                        this.image = this.sprites.right
+                    }
+                    if (this.movingDirection == "up") this.position.y += movingSpeed
+                    if (this.movingDirection == "down") this.position.y -= movingSpeed
                     this.stepsCount++
                 }
                 if (this.stepsCount == this.stepsAmount) {
@@ -114,5 +146,61 @@ class Boundary {
     draw() {
         c.fillStyle = 'rgba(255,0,0,0)'
         c.fillRect(this.position.x, this.position.y, this.width, this.height)
+    }
+}
+
+class Hitbox {
+    constructor({ position, steps, movingDirection }) {
+        //bee - x+28 y+28  
+        //skeleton - x+10 y+60
+        this.position = position
+        this.width = 45
+        this.height = 35
+        this.movingDirection = movingDirection
+        this.stepsAmount = steps
+        this.stepsCount = 0
+        this.moveForward = true
+        this.moveForward = true
+    }
+
+    draw() {
+        c.fillStyle = 'rgba(255,0,0,0.5)'
+        c.fillRect(this.position.x, this.position.y, this.width, this.height)
+
+        if (this.moveForward) {
+            if (this.stepsCount <= this.stepsAmount) {
+                if (this.movingDirection == "right") {
+                    this.position.x += movingSpeed
+                }
+                if (this.movingDirection == "left") {
+                    this.position.x -= movingSpeed
+
+                }
+                if (this.movingDirection == "up") this.position.y -= movingSpeed
+                if (this.movingDirection == "down") this.position.y += movingSpeed
+                this.stepsCount++
+            }
+            if (this.stepsCount == this.stepsAmount) {
+                this.moveForward = false
+                this.stepsCount = 0
+            }
+        } else {
+            if (this.stepsCount <= this.stepsAmount) {
+                if (this.movingDirection == "right") {
+                    this.position.x -= movingSpeed
+                }
+                if (this.movingDirection == "left") {
+                    this.position.x += movingSpeed
+                }
+                if (this.movingDirection == "up") this.position.y += movingSpeed
+                if (this.movingDirection == "down") this.position.y -= movingSpeed
+                this.stepsCount++
+            }
+            if (this.stepsCount == this.stepsAmount) {
+                this.moveForward = true
+                this.stepsCount = 0
+            }
+        }
+
     }
 }
