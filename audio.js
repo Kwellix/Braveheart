@@ -9,7 +9,7 @@ const audio = {
         src: './audio/run.mp3',
         html5: true,
         loop: true,
-        volume: 0.25
+        volume: 0.10
     }),
     Death: new Howl({
         src: './audio/death.mp3',
