@@ -21,9 +21,83 @@ skeletonRight.src = "./img/enemies/skeletonRight.png"
 const shadow = new Image()
 shadow.src = "./img/enemies/shadow.png"
 
+class Dialog {
+    constructor({ isShown = false, imageSrc, show }) {
+        this.isShown = isShown
+        this.show = show
+        this.image = new Image()
+        this.image.src = imageSrc
+    }
+
+    draw() {
+        if (this.show) {
+            if (!this.isShown) {
+                c.drawImage(
+                    this.image,
+                    0,
+                    0,
+                )
+            }
+        }
+    }
+}
+
+let dialogWindows = [
+    new Dialog({
+        show: false,
+        isShown: false,
+        imageSrc: "./data/dialogs/0.png"
+    }),
+    new Dialog({
+        show: false,
+        isShown: false,
+        imageSrc: "./data/dialogs/1.png"
+    }),
+    new Dialog({
+        show: false,
+        isShown: false,
+        imageSrc: "./data/dialogs/2.png"
+    }),
+    new Dialog({
+        show: false,
+        isShown: false,
+        imageSrc: "./data/dialogs/3.png"
+    }),
+    new Dialog({
+        show: false,
+        isShown: false,
+        imageSrc: "./data/dialogs/4.png"
+    }),
+    new Dialog({
+        show: false,
+        isShown: false,
+        imageSrc: "./data/dialogs/5.png"
+    }),
+    new Dialog({
+        show: false,
+        isShown: false,
+        imageSrc: "./data/dialogs/6.png"
+    }),
+    new Dialog({
+        show: false,
+        isShown: false,
+        imageSrc: "./data/dialogs/7.png"
+    }),
+]
+
+let showDialogsData = {
+    0: false,
+    1: false,
+    2: false,
+    3: false,
+    4: false,
+    5: false,
+    6: false,
+    7: false,
+}
 
 class Sprite {
-    constructor({ position, imageSrc, frames = { max: 1 }, sprites, transitTo, bgPosition, offsetBuffer, playerPosition, spriteType, enemiesOffsetData, steps, movingDirection, shadow = false, enemyType, dead = false }) {
+    constructor({ position, imageSrc, frames = { max: 1 }, sprites, transitTo, bgPosition, offsetBuffer, playerPosition, spriteType, enemiesOffsetData, steps, movingDirection, shadow = false, enemyType, dead = false, isPortal = false }) {
         this.position = position
         this.image = new Image()
         this.frames = { ...frames, val: 0, elapsed: 0 }
@@ -47,7 +121,9 @@ class Sprite {
         this.shadow = shadow
         this.enemyType = enemyType
         this.dead = dead
+        this.isPortal = isPortal
     }
+
 
     draw() {
         c.drawImage(
@@ -77,6 +153,13 @@ class Sprite {
                     shadow,
                     this.position.x + 3,
                     this.position.y + 82,
+                )
+            }
+            if (this.enemyType == "key") {
+                c.drawImage(
+                    shadow,
+                    this.position.x - 10,
+                    this.position.y + 30,
                 )
             }
         }
@@ -164,7 +247,7 @@ class Hitbox {
     }
 
     draw() {
-        c.fillStyle = 'rgba(255,0,0,0.5)'
+        c.fillStyle = 'rgba(255,0,0,0)'
         c.fillRect(this.position.x, this.position.y, this.width, this.height)
 
         if (this.moveForward) {
@@ -204,3 +287,5 @@ class Hitbox {
 
     }
 }
+
+

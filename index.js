@@ -3,6 +3,14 @@ let startScreenToggle = true
 let musicStart = false
 let runSound = false
 let deathSound = false
+let winSound = false
+let showWinPortal = false
+let portalSound = false
+let win = false
+let showGates = false
+let keyFound = false
+let showKey = false
+
 const player = new Sprite({
     position: {
         x: canvas.width / 2 - 31,
@@ -44,6 +52,40 @@ const startScreen = new Sprite({
         y: 0
     },
     imageSrc: "./img/startScreen.png",
+})
+
+const winScreen = new Sprite({
+    position: {
+        x: 0,
+        y: 0
+    },
+    imageSrc: "./img/winScreen.png",
+})
+
+const winPortal = new Sprite({
+    position: {
+        x: 648,
+        y: 113
+    },
+    imageSrc: "./img/portal_red.png",
+})
+
+const gates = new Sprite({
+    position: {
+        x: -57,
+        y: -338
+    },
+    imageSrc: "./img/gates.png",
+})
+
+const key = new Sprite({
+    position: {
+        x: 670,
+        y: 640
+    },
+    imageSrc: "./img/key.png",
+    enemyType: "key",
+    shadow: true
 })
 
 levels[level].init({
@@ -98,6 +140,14 @@ const restart = () => {
     gsap.to(overlay, {
         opacity: 1,
         onComplete: () => {
+            dialogWindows.forEach(dialog => {
+                dialog.show = false
+                dialog.isShown = false
+            })
+            Object.keys(showDialogsData).forEach(key => {
+                showDialogsData[key] = false
+            })
+            console.log(showDialogsData)
             levels["0_2"].init({
                 bgPosition: {
                     x: -56,
@@ -120,7 +170,10 @@ const restart = () => {
             player.frames.elapsed = 0
             keyBlock = false
             player.dead = false
+            win = false
+            showWinPortal = false
             deathSound = false
+            keyFound = false
             gsap.to(overlay, {
                 opacity: 0
             })
@@ -149,7 +202,35 @@ const deathDetect = () => {
     })
 }
 
+const winDetect = () => {
+    audio.Run.stop()
+    if (!winSound) {
+        audio.Win.play()
+        winSound = true
+    }
+    gsap.to(overlay, {
+        opacity: 1,
+        onComplete: () => {
+            keyBlock = true
+            win = true
+            audio.Map.stop()
+            musicStart = false
+            gsap.to(overlay, {
+                opacity: 0
+            })
+            portalSound = false
+        },
+        duration: 1.5
+    })
+}
+
 const changeLevel = (transition) => {
+    if (transition.isPortal) {
+        if (!portalSound) {
+            audio.Portal.play()
+            portalSound = true
+        }
+    }
     gsap.to(overlay, {
         opacity: 1,
         onComplete: () => {
@@ -172,6 +253,7 @@ const changeLevel = (transition) => {
             gsap.to(overlay, {
                 opacity: 0
             })
+            portalSound = false
         }
     })
 }
@@ -187,6 +269,9 @@ function animate() {
     transitions.forEach(transition => {
         transition.draw()
     })
+    if (showWinPortal) winPortal.draw()
+    if (showGates) gates.draw()
+    if (showKey) key.draw()
     playerShadow.draw()
     player.draw()
     enemies.forEach(enemy => {
@@ -197,10 +282,20 @@ function animate() {
         hitbox.draw()
     })
     foreground.draw()
+    if (!startScreenToggle) {
+        if (!keyBlock) {
+            dialogWindows.forEach(dialog => {
+                dialog.draw()
+            })
+        }
+    }
 
     checkIfRunning()
-    if (keyBlock) deathScreen.draw()
+    if (keyBlock) {
+        if (!win) deathScreen.draw()
+    }
     if (startScreenToggle) startScreen.draw()
+    if (win) winScreen.draw()
 
     c.save()
     c.globalAlpha = overlay.opacity
@@ -229,6 +324,26 @@ function animate() {
     }
 
     if (!keyBlock) {
+        if (showWinPortal) {
+            if (rectangularCollision({
+                rectangle1: player,
+                rectangle2: winPortal
+            })) {
+                winDetect()
+            }
+        }
+        if (!keyFound) {
+            if (level == "1_3") {
+                if (rectangularCollision({
+                    rectangle1: player,
+                    rectangle2: key
+                })) {
+                    audio.KeyFound.play()
+                    keyFound = true
+                    showKey = false
+                }
+            }
+        }
         if (keys.w.pressed) {
             player.moving = true
             if (!player.dead) lastDirection == "right" ? player.image = player.sprites.runningRight : player.image = player.sprites.runningLeft

@@ -15,4 +15,16 @@ const audio = {
         src: './audio/death.mp3',
         volume: 1.5
     }),
+    Portal: new Howl({
+        src: './audio/portal.mp3',
+        volume: 0.70
+    }),
+    Win: new Howl({
+        src: './audio/win.mp3',
+        volume: 0.70
+    }),
+    KeyFound: new Howl({
+        src: './audio/keyfound.mp3',
+        volume: 0.70
+    }),
 }

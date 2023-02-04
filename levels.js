@@ -25,16 +25,23 @@ let calcSteps = (amount) => {
     return parseInt(amount / movingSpeed)
 }
 
-
 let level = "0_2"
 let levels = {
     "0_1": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 3
             level = "0_1"
             collisionsMap = []
             boundaries = []
             enemies = []
             enemyHitboxes = []
+            if (showDialogsData[6]) {
+                dialogWindows[6].isShown = true
+            }
+            if (showDialogsData[2]) {
+                dialogWindows[2].isShown = true
+            }
+            dialogWindows[0].isShown = true
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -42,8 +49,11 @@ let levels = {
                 },
                 imageSrc: "./img/maps/map_0_1.png"
             })
-            for (let i = 0; i < collisions_0_1.length; i += 30) {
-                collisionsMap.push(collisions_0_1.slice(i, 30 + i))
+            if (!keyFound) showGates = true
+            let collisionsSet
+            keyFound ? collisionsSet = collisions_0_1_unlocked : collisionsSet = collisions_0_1_locked
+            for (let i = 0; i < collisionsSet.length; i += 30) {
+                collisionsMap.push(collisionsSet.slice(i, 30 + i))
             }
             collisionsMap.forEach((row, i) => {
                 row.forEach((symbol, j) => {
@@ -176,16 +186,30 @@ let levels = {
                     movingDirection: "up",
                 }),
             )
-            movables = [background, ...boundaries, foreground, ...transitions, ...enemies, ...enemyHitboxes]
+            movables = [background, ...boundaries, foreground, ...transitions, ...enemies, ...enemyHitboxes, gates]
         }
     },
     "0_2": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 2
             level = "0_2"
             collisionsMap = []
             boundaries = []
             enemies = []
             enemyHitboxes = []
+            showGates = false
+            showKey = false
+            if (!showDialogsData[0]) {
+                dialogWindows[0].show = true
+                showDialogsData[0] = true
+            }
+            if (showDialogsData[1]) {
+                if (!showDialogsData[2]) {
+                    dialogWindows[1].isShown = true
+                    dialogWindows[2].show = true
+                    showDialogsData[2] = true
+                }
+            }
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -239,7 +263,8 @@ let levels = {
                     enemiesOffsetData: {
                         x: 50,
                         y: 0
-                    }
+                    },
+                    previousDialog: 0
                 }),
                 new Sprite({
                     position: {
@@ -263,7 +288,8 @@ let levels = {
                     enemiesOffsetData: {
                         x: 0,
                         y: 110
-                    }
+                    },
+                    previousDialog: 0
                 }),
                 new Sprite({
                     position: {
@@ -295,11 +321,20 @@ let levels = {
     },
     "0_3": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 3
             level = "0_3"
             collisionsMap = []
             boundaries = []
             enemies = []
             enemyHitboxes = []
+            showKey = false
+            if (showDialogsData[4]) {
+                dialogWindows[4].isShown = true
+            }
+            if (showDialogsData[2]) {
+                dialogWindows[2].isShown = true
+            }
+            dialogWindows[0].isShown = true
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -470,10 +505,20 @@ let levels = {
     },
     "0_4": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 2
             level = "0_4"
             collisionsMap = []
             boundaries = []
             enemies = []
+            enemyHitboxes = []
+            showWinPortal = true
+            if (showDialogsData[3]) {
+                dialogWindows[3].isShown = true
+            }
+            if (!showDialogsData[7]) {
+                showDialogsData[7] = true
+                dialogWindows[7].show = true
+            }
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -524,20 +569,30 @@ let levels = {
                         y: 34
                     },
                     enemiesOffsetData: {
-                        x: 0,
-                        y: 0
+                        x: -80,
+                        y: 170
                     }
                 }),
             ]
-            movables = [background, ...boundaries, foreground, ...transitions, ...enemies]
+            movables = [background, ...boundaries, foreground, ...transitions, ...enemies, ...enemyHitboxes, winPortal]
         }
     },
     "0_5": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 2
             level = "0_5"
             collisionsMap = []
             boundaries = []
             enemies = []
+            enemyHitboxes = []
+            showWinPortal = false
+            if (showDialogsData[7]) {
+                dialogWindows[7].isShown = true
+            }
+            if (!showDialogsData[3]) {
+                dialogWindows[3].show = true
+                showDialogsData[3] = true
+            }
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -568,6 +623,31 @@ let levels = {
                 imageSrc: "./img/maps/foreground_0_5.png"
             })
             transitions = [
+                new Sprite({
+                    position: {
+                        x: 227 + enemiesOffset.x,
+                        y: 324 + enemiesOffset.y,
+                    },
+                    imageSrc: "./img/portal_red.png",
+                    transitTo: "1_3",
+                    bgPosition: {
+                        x: -6,
+                        y: -334
+                    },
+                    offsetBuffer: {
+                        x: 0,
+                        y: -145
+                    },
+                    playerPosition: {
+                        x: 669,
+                        y: 444
+                    },
+                    enemiesOffsetData: {
+                        x: 50,
+                        y: -160
+                    },
+                    isPortal: true
+                }),
                 new Sprite({
                     position: {
                         x: 0,
@@ -622,11 +702,23 @@ let levels = {
     },
     "1_1": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 3
             level = "1_1"
             collisionsMap = []
             boundaries = []
             enemies = []
             enemyHitboxes = []
+            showGates = false
+            if (showDialogsData[5]) {
+                dialogWindows[5].isShown = true
+            }
+            if (showDialogsData[5]) {
+                if (!showDialogsData[6]) {
+                    dialogWindows[5].isShown = true
+                    dialogWindows[6].show = true
+                    showDialogsData[6] = true
+                }
+            }
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -797,11 +889,20 @@ let levels = {
     },
     "1_2": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 4
             level = "1_2"
             collisionsMap = []
             boundaries = []
             enemies = []
             enemyHitboxes = []
+            showKey = false
+            if (showDialogsData[4]) {
+                dialogWindows[4].isShown = true
+            }
+            if (showDialogsData[2]) {
+                dialogWindows[2].isShown = true
+            }
+            dialogWindows[0].isShown = true
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -972,11 +1073,23 @@ let levels = {
     },
     "1_3": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 3
             level = "1_3"
             collisionsMap = []
             boundaries = []
             enemies = []
             enemyHitboxes = []
+            if (!keyFound) showKey = true
+            if (showDialogsData[3]) {
+                dialogWindows[3].isShown = true
+            }
+            if (showDialogsData[3]) {
+                if (!showDialogsData[4]) {
+                    dialogWindows[3].isShown = true
+                    dialogWindows[4].show = true
+                    showDialogsData[4] = true
+                }
+            }
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -1195,16 +1308,22 @@ let levels = {
                     movingDirection: "right",
                 }),
             )
-            movables = [background, ...boundaries, foreground, ...transitions, ...enemies, ...enemyHitboxes]
+            movables = [background, ...boundaries, foreground, ...transitions, ...enemies, ...enemyHitboxes, key]
 
         }
     },
     "1_4": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 2
             level = "1_4"
             collisionsMap = []
             boundaries = []
             enemies = []
+            enemyHitboxes = []
+            if (!showDialogsData[5]) {
+                dialogWindows[5].show = true
+                showDialogsData[5] = true
+            }
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -1235,6 +1354,31 @@ let levels = {
                 imageSrc: "./img/maps/foreground_1_4.png"
             })
             transitions = [
+                new Sprite({
+                    position: {
+                        x: 226 + enemiesOffset.x,
+                        y: 119 + enemiesOffset.y,
+                    },
+                    imageSrc: "./img/portal_blue.png",
+                    transitTo: "1_1",
+                    bgPosition: {
+                        x: -106,
+                        y: -4
+                    },
+                    offsetBuffer: {
+                        x: 0,
+                        y: 185
+                    },
+                    playerPosition: {
+                        x: 669,
+                        y: 114
+                    },
+                    enemiesOffsetData: {
+                        x: -50,
+                        y: 170
+                    },
+                    isPortal: true
+                }),
                 new Sprite({
                     position: {
                         x: 1500,
@@ -1314,11 +1458,18 @@ let levels = {
     },
     "1_5": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 4
             level = "1_5"
             collisionsMap = []
             boundaries = []
             enemies = []
             enemyHitboxes = []
+            if (showDialogsData[5]) {
+                dialogWindows[5].isShown = true
+            }
+            if (showDialogsData[3]) {
+                dialogWindows[3].isShown = true
+            }
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -1369,8 +1520,8 @@ let levels = {
                         y: 579
                     },
                     enemiesOffsetData: {
-                        x: 0,
-                        y: 0
+                        x: -49,
+                        y: -160
                     }
                 }),
                 new Sprite({
@@ -1417,8 +1568,8 @@ let levels = {
                         y: 299
                     },
                     enemiesOffsetData: {
-                        x: 0,
-                        y: 0
+                        x: -80,
+                        y: -5
                     }
                 }),
             ]
@@ -1486,11 +1637,15 @@ let levels = {
     },
     "1_6": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 3
             level = "1_6"
             collisionsMap = []
             boundaries = []
             enemies = []
             enemyHitboxes = []
+            if (showDialogsData[1]) {
+                dialogWindows[1].isShown = true
+            }
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -1565,8 +1720,8 @@ let levels = {
                         y: 295
                     },
                     enemiesOffsetData: {
-                        x: 0,
-                        y: 0
+                        x: 55,
+                        y: -45
                     }
                 }),
             ]
@@ -1634,11 +1789,15 @@ let levels = {
     },
     "2_1": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 5
             level = "2_1"
             collisionsMap = []
             boundaries = []
             enemies = []
             enemyHitboxes = []
+            if (showDialogsData[6]) {
+                dialogWindows[6].isShown = true
+            }
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -1782,6 +1941,7 @@ let levels = {
     },
     "2_2": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 5
             level = "2_2"
             collisionsMap = []
             boundaries = []
@@ -1957,6 +2117,7 @@ let levels = {
     },
     "2_3": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 9
             level = "2_3"
             collisionsMap = []
             boundaries = []
@@ -2107,7 +2268,7 @@ let levels = {
                 new Sprite({
                     position: {
                         x: 1040 + enemiesOffset.x,
-                        y: 570 + enemiesOffset.y
+                        y: 510 + enemiesOffset.y
                     },
                     frames: {
                         max: 13
@@ -2126,7 +2287,26 @@ let levels = {
                 new Sprite({
                     position: {
                         x: 370 + enemiesOffset.x,
-                        y: 410 + enemiesOffset.y
+                        y: 390 + enemiesOffset.y
+                    },
+                    frames: {
+                        max: 13
+                    },
+                    imageSrc: "./img/enemies/skeleton.png",
+                    sprites: {
+                        left: skeletonLeft,
+                        right: skeletonRight,
+                    },
+                    spriteType: "enemy",
+                    steps: calcSteps(700),
+                    movingDirection: "right",
+                    shadow: true,
+                    enemyType: "skeleton"
+                }),
+                new Sprite({
+                    position: {
+                        x: 370 + enemiesOffset.x,
+                        y: 630 + enemiesOffset.y
                     },
                     frames: {
                         max: 13
@@ -2163,7 +2343,7 @@ let levels = {
                 new Hitbox({
                     position: {
                         x: 1050 + enemiesOffset.x,
-                        y: 630 + enemiesOffset.y
+                        y: 570 + enemiesOffset.y
                     },
                     steps: calcSteps(700),
                     movingDirection: "left"
@@ -2171,7 +2351,15 @@ let levels = {
                 new Hitbox({
                     position: {
                         x: 380 + enemiesOffset.x,
-                        y: 470 + enemiesOffset.y
+                        y: 450 + enemiesOffset.y
+                    },
+                    steps: calcSteps(700),
+                    movingDirection: "right"
+                }),
+                new Hitbox({
+                    position: {
+                        x: 380 + enemiesOffset.x,
+                        y: 690 + enemiesOffset.y
                     },
                     steps: calcSteps(700),
                     movingDirection: "right"
@@ -2183,11 +2371,15 @@ let levels = {
     },
     "2_4": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 8
             level = "2_4"
             collisionsMap = []
             boundaries = []
             enemies = []
             enemyHitboxes = []
+            if (showDialogsData[5]) {
+                dialogWindows[5].isShown = true
+            }
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -2286,8 +2478,8 @@ let levels = {
                         y: 299
                     },
                     enemiesOffsetData: {
-                        x: 0,
-                        y: 0
+                        x: -79,
+                        y: -55
                     }
                 }),
             ]
@@ -2328,11 +2520,15 @@ let levels = {
     },
     "2_5": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 5
             level = "2_5"
             collisionsMap = []
             boundaries = []
             enemies = []
             enemyHitboxes = []
+            if (showDialogsData[2]) {
+                dialogWindows[2].isShown = true
+            }
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -2407,8 +2603,8 @@ let levels = {
                         y: 64
                     },
                     enemiesOffsetData: {
-                        x: 0,
-                        y: 0
+                        x: -50,
+                        y: 171
                     }
                 }),
             ]
@@ -2584,10 +2780,16 @@ let levels = {
     },
     "2_6": {
         init: ({ bgPosition, enemiesOffset }) => {
+            movingSpeed = 2
             level = "2_6"
             collisionsMap = []
             boundaries = []
             enemies = []
+            enemyHitboxes = []
+            if (!showDialogsData[1]) {
+                dialogWindows[1].show = true
+                showDialogsData[1] = true
+            }
             background = new Sprite({
                 position: {
                     x: bgPosition.x,
@@ -2618,6 +2820,31 @@ let levels = {
                 imageSrc: "./img/maps/foreground_2_6.png"
             })
             transitions = [
+                new Sprite({
+                    position: {
+                        x: 688 + enemiesOffset.x,
+                        y: 375 + enemiesOffset.y,
+                    },
+                    imageSrc: "./img/portal_blue.png",
+                    transitTo: "0_2",
+                    bgPosition: {
+                        x: -56,
+                        y: -174
+                    },
+                    offsetBuffer: {
+                        x: 0,
+                        y: 0
+                    },
+                    playerPosition: {
+                        x: 669,
+                        y: 299
+                    },
+                    enemiesOffsetData: {
+                        x: -50,
+                        y: 170
+                    },
+                    isPortal: true
+                }),
                 new Sprite({
                     position: {
                         x: 0,
