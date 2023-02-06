@@ -169,7 +169,7 @@ class Sprite {
                 this.frames.elapsed++
             }
 
-            if (this.frames.elapsed % 5 === 0) {
+            if (this.frames.elapsed % playerFrameSpeed === 0) {
                 if (this.frames.val < this.frames.max - 1) this.frames.val++
                 else this.frames.val = 0
             }
@@ -179,15 +179,15 @@ class Sprite {
             if (this.moveForward) {
                 if (this.stepsCount <= this.stepsAmount) {
                     if (this.movingDirection == "right") {
-                        this.position.x += movingSpeed
+                        this.position.x += movingSpeed * mobSpeedMultiplier
                         this.image = this.sprites.right
                     }
                     if (this.movingDirection == "left") {
-                        this.position.x -= movingSpeed
+                        this.position.x -= movingSpeed * mobSpeedMultiplier
                         this.image = this.sprites.left
                     }
-                    if (this.movingDirection == "up") this.position.y -= movingSpeed
-                    if (this.movingDirection == "down") this.position.y += movingSpeed
+                    if (this.movingDirection == "up") this.position.y -= movingSpeed * mobSpeedMultiplier
+                    if (this.movingDirection == "down") this.position.y += movingSpeed * mobSpeedMultiplier
                     this.stepsCount++
                 }
                 if (this.stepsCount == this.stepsAmount) {
@@ -197,15 +197,15 @@ class Sprite {
             } else {
                 if (this.stepsCount <= this.stepsAmount) {
                     if (this.movingDirection == "right") {
-                        this.position.x -= movingSpeed
+                        this.position.x -= movingSpeed * mobSpeedMultiplier
                         this.image = this.sprites.left
                     }
                     if (this.movingDirection == "left") {
-                        this.position.x += movingSpeed
+                        this.position.x += movingSpeed * mobSpeedMultiplier
                         this.image = this.sprites.right
                     }
-                    if (this.movingDirection == "up") this.position.y += movingSpeed
-                    if (this.movingDirection == "down") this.position.y -= movingSpeed
+                    if (this.movingDirection == "up") this.position.y += movingSpeed * mobSpeedMultiplier
+                    if (this.movingDirection == "down") this.position.y -= movingSpeed * mobSpeedMultiplier
                     this.stepsCount++
                 }
                 if (this.stepsCount == this.stepsAmount) {
@@ -253,14 +253,14 @@ class Hitbox {
         if (this.moveForward) {
             if (this.stepsCount <= this.stepsAmount) {
                 if (this.movingDirection == "right") {
-                    this.position.x += movingSpeed
+                    this.position.x += movingSpeed * mobSpeedMultiplier
                 }
                 if (this.movingDirection == "left") {
-                    this.position.x -= movingSpeed
+                    this.position.x -= movingSpeed * mobSpeedMultiplier
 
                 }
-                if (this.movingDirection == "up") this.position.y -= movingSpeed
-                if (this.movingDirection == "down") this.position.y += movingSpeed
+                if (this.movingDirection == "up") this.position.y -= movingSpeed * mobSpeedMultiplier
+                if (this.movingDirection == "down") this.position.y += movingSpeed * mobSpeedMultiplier
                 this.stepsCount++
             }
             if (this.stepsCount == this.stepsAmount) {
@@ -270,13 +270,13 @@ class Hitbox {
         } else {
             if (this.stepsCount <= this.stepsAmount) {
                 if (this.movingDirection == "right") {
-                    this.position.x -= movingSpeed
+                    this.position.x -= movingSpeed * mobSpeedMultiplier
                 }
                 if (this.movingDirection == "left") {
-                    this.position.x += movingSpeed
+                    this.position.x += movingSpeed * mobSpeedMultiplier
                 }
-                if (this.movingDirection == "up") this.position.y += movingSpeed
-                if (this.movingDirection == "down") this.position.y -= movingSpeed
+                if (this.movingDirection == "up") this.position.y += movingSpeed * mobSpeedMultiplier
+                if (this.movingDirection == "down") this.position.y -= movingSpeed * mobSpeedMultiplier
                 this.stepsCount++
             }
             if (this.stepsCount == this.stepsAmount) {

@@ -354,7 +354,7 @@ function animate() {
                     rectangle2: {
                         ...boundary, position: {
                             x: boundary.position.x,
-                            y: boundary.position.y + 5,
+                            y: boundary.position.y + playerSpeed,
                         }
                     }
                 })) {
@@ -378,21 +378,21 @@ function animate() {
                 }
             }
             if (moving) {
-                if (background.position.y > -5) {
+                if (background.position.y > -playerSpeed) {
                     moving = false
                     playerMovables.forEach(playerMovable => {
-                        playerMovable.position.y -= 5
+                        playerMovable.position.y -= playerSpeed
                     })
-                    offsetBuffer.y += 5
+                    offsetBuffer.y += playerSpeed
                 } else {
-                    if (offsetBuffer.y != 0) {
+                    if (offsetBuffer.y < -10 || offsetBuffer.y > 10) {
                         playerMovables.forEach(playerMovable => {
-                            playerMovable.position.y -= 5
+                            playerMovable.position.y -= playerSpeed
                         })
-                        offsetBuffer.y += 5
+                        offsetBuffer.y += playerSpeed
                     } else {
                         movables.forEach(movable => {
-                            movable.position.y += 5
+                            movable.position.y += playerSpeed
                         })
                     }
                 }
@@ -408,7 +408,7 @@ function animate() {
                     rectangle1: player,
                     rectangle2: {
                         ...boundary, position: {
-                            x: boundary.position.x + 5,
+                            x: boundary.position.x + playerSpeed,
                             y: boundary.position.y,
                         }
                     }
@@ -433,21 +433,21 @@ function animate() {
                 }
             }
             if (moving) {
-                if (background.position.x > -5) {
+                if (background.position.x > -playerSpeed) {
                     moving = false
                     playerMovables.forEach(playerMovable => {
-                        playerMovable.position.x -= 5
+                        playerMovable.position.x -= playerSpeed
                     })
-                    offsetBuffer.x += 5
+                    offsetBuffer.x += playerSpeed
                 } else {
-                    if (offsetBuffer.x != 0) {
+                    if (offsetBuffer.x < -10 || offsetBuffer.x > 10) {
                         playerMovables.forEach(playerMovable => {
-                            playerMovable.position.x -= 5
+                            playerMovable.position.x -= playerSpeed
                         })
-                        offsetBuffer.x += 5
+                        offsetBuffer.x += playerSpeed
                     } else {
                         movables.forEach(movable => {
-                            movable.position.x += 5
+                            movable.position.x += playerSpeed
                         })
                     }
                 }
@@ -463,7 +463,7 @@ function animate() {
                     rectangle2: {
                         ...boundary, position: {
                             x: boundary.position.x,
-                            y: boundary.position.y - 5,
+                            y: boundary.position.y - playerSpeed,
                         }
                     }
                 })) {
@@ -487,21 +487,21 @@ function animate() {
                 }
             }
             if (moving) {
-                if (background.position.y < (canvas.height - background.height + 5)) {
+                if (background.position.y < (canvas.height - background.height + playerSpeed)) {
                     moving = false
                     playerMovables.forEach(playerMovable => {
-                        playerMovable.position.y += 5
+                        playerMovable.position.y += playerSpeed
                     })
-                    offsetBuffer.y -= 5
+                    offsetBuffer.y -= playerSpeed
                 } else {
-                    if (offsetBuffer.y != 0) {
+                    if (offsetBuffer.y < -10 || offsetBuffer.y > 10) {
                         playerMovables.forEach(playerMovable => {
-                            playerMovable.position.y += 5
+                            playerMovable.position.y += playerSpeed
                         })
-                        offsetBuffer.y -= 5
+                        offsetBuffer.y -= playerSpeed
                     } else {
                         movables.forEach(movable => {
-                            movable.position.y -= 5
+                            movable.position.y -= playerSpeed
                         })
                     }
                 }
@@ -517,7 +517,7 @@ function animate() {
                     rectangle1: player,
                     rectangle2: {
                         ...boundary, position: {
-                            x: boundary.position.x - 5,
+                            x: boundary.position.x - playerSpeed,
                             y: boundary.position.y,
                         }
                     }
@@ -542,21 +542,21 @@ function animate() {
                 }
             }
             if (moving) {
-                if (background.position.x < (canvas.width - background.width + 5)) {
+                if (background.position.x < (canvas.width - background.width + playerSpeed)) {
                     moving = false
                     playerMovables.forEach(playerMovable => {
-                        playerMovable.position.x += 5
+                        playerMovable.position.x += playerSpeed
                     })
-                    offsetBuffer.x -= 5
+                    offsetBuffer.x -= playerSpeed
                 } else {
-                    if (offsetBuffer.x != 0) {
+                    if (offsetBuffer.x < -10 || offsetBuffer.x > 10) {
                         playerMovables.forEach(playerMovable => {
-                            playerMovable.position.x += 5
+                            playerMovable.position.x += playerSpeed
                         })
-                        offsetBuffer.x -= 5
+                        offsetBuffer.x -= playerSpeed
                     } else {
                         movables.forEach(movable => {
-                            movable.position.x -= 5
+                            movable.position.x -= playerSpeed
                         })
                     }
                 }
@@ -578,6 +578,8 @@ function animate() {
         }
     }
     document.getElementById('level').innerHTML = `${level}`;
+    document.getElementById('playerSpeed').innerHTML = `${playerSpeed}`;
+    document.getElementById('fpsMeter').innerHTML = `FPS: ${fps}`;
     document.getElementById('coordinates').innerHTML = `PLAYER: ${player.position.x}, ${player.position.y}`;
     document.getElementById('offsetBuffer').innerHTML = `offsetBUFFER: ${offsetBuffer.x}, ${offsetBuffer.y}`;
     document.getElementById('bgPosition').innerHTML = `BG: ${background.position.x}, ${background.position.y}`;

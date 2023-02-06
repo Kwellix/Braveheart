@@ -3,7 +3,7 @@ const audio = {
         src: './audio/map.mp3',
         html5: true,
         loop: true,
-        volume: 0.4
+        volume: 0.3
     }),
     Run: new Howl({
         src: './audio/run.mp3',

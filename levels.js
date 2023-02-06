@@ -22,7 +22,7 @@ let overlay = {
 
 let movingSpeed = 2
 let calcSteps = (amount) => {
-    return parseInt(amount / movingSpeed)
+    return parseInt(amount / (movingSpeed * mobSpeedMultiplier) )
 }
 
 let level = "0_2"
