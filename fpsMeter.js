@@ -16,10 +16,10 @@ function refreshLoop() {
         fps = times.length;
         refreshLoop();
     });
-    if (fps < 50) {
-        playerSpeed = 5
+    if (fps < 80) {
+        playerSpeed = 5.5
         playerFrameSpeed = 5
-        mobSpeedMultiplier = 1
+        mobSpeedMultiplier = 1.1
     } else if (fps > 80 && fps < 100) {
         playerSpeed = 4
         playerFrameSpeed = 8

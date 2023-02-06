@@ -22,7 +22,7 @@ let overlay = {
 
 let movingSpeed = 2
 let calcSteps = (amount) => {
-    return parseInt(amount / (movingSpeed * mobSpeedMultiplier) )
+    return parseInt(amount / (movingSpeed * mobSpeedMultiplier))
 }
 
 let level = "0_2"
@@ -2520,7 +2520,7 @@ let levels = {
     },
     "2_5": {
         init: ({ bgPosition, enemiesOffset }) => {
-            movingSpeed = 5
+            movingSpeed = 3.5
             level = "2_5"
             collisionsMap = []
             boundaries = []

@@ -147,7 +147,6 @@ const restart = () => {
             Object.keys(showDialogsData).forEach(key => {
                 showDialogsData[key] = false
             })
-            console.log(showDialogsData)
             levels["0_2"].init({
                 bgPosition: {
                     x: -56,
