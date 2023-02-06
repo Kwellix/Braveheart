@@ -577,12 +577,12 @@ function animate() {
             }
         }
     }
-    document.getElementById('level').innerHTML = `${level}`;
-    document.getElementById('playerSpeed').innerHTML = `${playerSpeed}`;
-    document.getElementById('fpsMeter').innerHTML = `FPS: ${fps}`;
-    document.getElementById('coordinates').innerHTML = `PLAYER: ${player.position.x}, ${player.position.y}`;
-    document.getElementById('offsetBuffer').innerHTML = `offsetBUFFER: ${offsetBuffer.x}, ${offsetBuffer.y}`;
-    document.getElementById('bgPosition').innerHTML = `BG: ${background.position.x}, ${background.position.y}`;
+    //document.getElementById('level').innerHTML = `${level}`;
+    //document.getElementById('playerSpeed').innerHTML = `${playerSpeed}`;
+    //document.getElementById('fpsMeter').innerHTML = `FPS: ${fps}`;
+    //document.getElementById('coordinates').innerHTML = `PLAYER: ${player.position.x}, ${player.position.y}`;
+    //document.getElementById('offsetBuffer').innerHTML = `offsetBUFFER: ${offsetBuffer.x}, ${offsetBuffer.y}`;
+    //document.getElementById('bgPosition').innerHTML = `BG: ${background.position.x}, ${background.position.y}`;
 }
 
 animate()
